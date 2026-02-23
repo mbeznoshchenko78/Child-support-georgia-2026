@@ -1,0 +1,214 @@
+# Assignment: Build Georgia Child Support Calculator (2026) - HTML/JS (1 or 2 Children)
+
+## Repository
+https://github.com/mbeznoshchenko78/Child-support-georgia-2026
+
+## Goal
+Create a visually appealing, easy-to-use, and legally aligned **Georgia child support calculator (2026)** in pure HTML/CSS/JavaScript (no backend required for v1), supporting **1 or 2 children**, with:
+
+- Parenting time adjustment (2026 formula) using number of nights (overnights)
+- Health insurance premium allocation (child-only attributable premium)
+- Dental / vision insurance handling (as "other health related insurance" deviation)
+- Ability for either custodial or noncustodial parent to pay insurance
+- High-income cases **above $40,000/month combined income** with a clear, legally correct default and a transparent planning-mode option
+- Prefilled starting incomes:
+  - Custodial parent monthly income = **$15,000**
+  - Noncustodial parent monthly income = **$25,000**
+
+---
+
+## Legal Basis / Required Logic (2026)
+Implement the calculator to track Georgia 2026 statute structure as closely as practical for an estimate tool:
+
+### 1) Parent roles
+Support inputs for:
+- Custodial Parent (CP)
+- Noncustodial Parent (NCP)
+
+Important statutory note:
+- Georgia defines NCP as the parent with whom the child resides less than 50% of the time
+- If equal time, NCP is the parent with greater gross income (or court-designated if equal income)  
+(Used for validation and edge cases)
+
+### 2) Basic Child Support Obligation (BCSO) table lookup
+Use the Georgia Basic Child Support Obligation Table (2026-effective statute table).
+- Support **1 child** and **2 children** columns only for v1
+- Use the combined adjusted gross income row
+- If income falls between table values, use the **closest** table amount (statutory wording)
+
+### 3) Parenting Time Adjustment (2026 required worksheet adjustment)
+Implement the parenting time adjustment formula (Schedule C logic) using the statutory formula:
+
+Given:
+- NCP court-ordered days = `n`
+- CP court-ordered days = `c`
+- CP basic share = `CP_share`
+- NCP basic share = `NCP_share`
+
+Formula:
+1. `A = n ^ 2.5`
+2. `B = c ^ 2.5`
+3. `C = A * CP_share`
+4. `D = B * NCP_share`
+5. `E = C - D`
+6. `F = E / (A + B)`
+7. `PTA_amount = NCP_share + F`
+
+Use `PTA_amount` as the NCP's adjusted basic support obligation amount for the parenting-time step.
+
+#### Parenting time measurement input (user-facing)
+The statute defines parenting-time “days” primarily by overnights (and allows daytime-hour conversion in some cases). For v1 UI:
+- Input **overnights per child per year (0-365)**
+- If 2 children and overnights differ, compute the **average number of court-ordered days** across the children for Schedule C (statute requires average in varying parenting-time situations)
+- Set CP days = `365 - NCP_days_avg` (v1 overnight-only mode)
+
+Add help text noting:
+- This is based on annual average overnights
+- If a case uses regular daytime periods without overnights, legal calculation may need hour-to-day conversion
+
+### 4) Additional expenses - health insurance (Schedule D)
+Implement health insurance premium allocation as an additional expense:
+- Input monthly **child-attributable health insurance premium**
+- Allow payer selection:
+  - CP pays
+  - NCP pays
+- Prorate the premium by each parent’s pro rata income share
+- Reflect actual payer credit/debit so the final transfer amount properly accounts for who paid the premium
+
+### 5) Dental / Vision insurance (Deviation - “other health related insurance”)
+Georgia treats vision/dental as a possible deviation (“other health related insurance”), not the standard health premium bucket.
+Implement as optional, clearly labeled deviations:
+- `Dental premium (monthly)` + payer (CP/NCP)
+- `Vision premium (monthly)` + payer (CP/NCP)
+- Toggle: **Include as discretionary deviation estimate**
+- Add warning text: this is **court-discretionary**, not automatic presumptive support
+
+### 6) High-income cases (combined income > $40,000/month)
+Georgia high-income rule: if combined adjusted gross income exceeds $40,000/month, the court sets BCSO at the **highest table amount** and may consider an **upward deviation** for high-income parents.
+
+#### Required implementation approach
+Implement **two modes** for >$40,000:
+
+##### Mode A (Default, legally conservative): "Statutory Presumptive"
+- Cap BCSO lookup at **$40,000**
+- Continue all later calculations (pro rata, parenting time adjustment, health insurance, etc.) using capped BCSO
+- Show a banner:
+  - "Combined income exceeds statutory table maximum. Georgia law uses the highest table amount for presumptive BCSO; court may consider upward deviation."
+
+##### Mode B (Optional, clearly non-presumptive): "Planning / What-if High-Income"
+User can optionally estimate a potential upward deviation using one of:
+- **Manual upward deviation amount** (recommended v1)
+- Optional future enhancement: selectable heuristic methods (e.g., linear extension based on last rows), but label as non-statutory
+
+For v1, implement only:
+- `Manual high-income upward deviation amount ($/month)`
+- Add to presumptive result as a separate line item
+- Mark as "**Court-discretionary estimate**"
+
+**Do NOT** silently extrapolate the table in the default mode.
+
+---
+
+## Scope for v1 (Must Have)
+### Supported
+- 1 or 2 children
+- CP / NCP monthly incomes
+- Parenting time overnights (per child)
+- Health insurance (child portion) + payer
+- Dental insurance + payer (optional deviation)
+- Vision insurance + payer (optional deviation)
+- >$40,000 combined income handling (capped presumptive + optional manual high-income deviation)
+- Detailed breakdown view + final monthly transfer amount
+- Mobile-friendly UI
+- Copy/share summary (text)
+- Local save/load scenario (localStorage)
+
+### Out of Scope for v1 (but design for future)
+- Full Schedule B deductions (self-employment tax, preexisting orders, qualified children theoretical order)
+- Work-related child care costs
+- Low-income adjustment table
+- Split parenting worksheets
+- SSA/VA child benefit credits
+- Court order generation / legal advice
+
+---
+
+## UX / Design Requirements (Visually Appealing + Easy to Use)
+Build a polished single-page calculator with:
+- Clean card layout
+- Sticky result panel on desktop
+- Responsive mobile layout
+- Clear sectioning:
+  1. Case setup
+  2. Incomes
+  3. Parenting time (overnights)
+  4. Insurance
+  5. High-income handling
+  6. Results + breakdown
+- Real-time validation + inline error messages
+- “Explain this” expandable tooltips for legal concepts
+- Accessible labels / keyboard navigation / high contrast support
+
+### Default values (required)
+Prefill:
+- CP income = **15000**
+- NCP income = **25000**
+- Child count = **1** (default)
+- Parenting time:
+  - Start with common default placeholder values (e.g., NCP = 80 overnights for each child) OR blank, but provide guidance
+- Health/dental/vision = 0
+- High-income mode = Statutory Presumptive
+- Manual high-income deviation = 0
+
+---
+
+## Data / Calculation Architecture
+### File structure (proposed)
+- `index.html`
+- `styles.css`
+- `app.js`
+- `data/ga_bcso_table_2026.json`
+- `src/`
+  - `calc/`
+    - `lookupBcso.js`
+    - `parentingTimeAdjustment.js`
+    - `insuranceAllocation.js`
+    - `highIncome.js`
+    - `rounding.js`
+    - `validate.js`
+  - `ui/`
+    - `renderResults.js`
+    - `formBindings.js`
+    - `tooltips.js`
+- `tests/`
+  - `calc.test.js`
+  - `fixtures/`
+- `README.md`
+- `DISCLAIMER.md`
+
+### Data model (v1)
+```js
+{
+  childCount: 1 | 2,
+  incomes: {
+    cpMonthly: number,
+    ncpMonthly: number
+  },
+  overnights: {
+    child1Ncp: number,
+    child2Ncp?: number
+  },
+  insurance: {
+    health: { amount: number, payer: "cp" | "ncp" },
+    dental: { amount: number, payer: "cp" | "ncp", includeDeviation: boolean },
+    vision: { amount: number, payer: "cp" | "ncp", includeDeviation: boolean }
+  },
+  highIncome: {
+    mode: "statutory" | "planning",
+    manualUpwardDeviation: number
+  },
+  options: {
+    applyParentingTimeAdjustment: true,
+    roundCurrencyToCents: true
+  }
+}
