@@ -17,13 +17,17 @@
       <section class="card">
         <h2>Case setup</h2>
         <label>Number of children
-          <select name="childCount"><option value="1" selected>1</option><option value="2">2</option><option value="3">3 (unsupported)</option></select>
+          <select name="childCount"><option value="1" selected>1</option><option value="2">2</option></select>
         </label>
         <label>Court-ordered parenting time
           <select name="courtOrderedParentingTime"><option value="yes" selected>Yes</option><option value="no">No</option></select>
         </label>
-        <label><input type="checkbox" name="splitParentingCase" /> Split parenting case (unsupported)</label>
         <label><input type="checkbox" name="courtDesignatedNcpOverride" /> Court designated NCP override</label>
+
+        <details>
+          <summary>Unsupported cases</summary>
+          <label><input type="checkbox" name="splitParentingCase" /> Split parenting case (unsupported)</label>
+        </details>
       </section>
 
       <section class="card">
@@ -47,14 +51,17 @@
 
       <section class="card">
         <h2>Parenting time (Schedule C)</h2>
-        <label>Mode
-          <select name="parentingMode"><option value="average_days" selected>Average days</option><option value="per_child_days">Per child days</option></select>
-        </label>
-        <div class="grid2">
-          <label>NCP parenting days average <input type="number" step="0.1" name="ncpDaysAverage" value="80" min="0" max="182.5"/></label>
-          <label>Child 1 NCP days <input type="number" step="0.1" name="child1NcpDays" value="80" min="0" max="182.5"/></label>
-          <label>Child 2 NCP days <input type="number" step="0.1" name="child2NcpDays" value="80" min="0" max="182.5"/></label>
-        </div>
+        <details>
+          <summary>Parenting-time inputs</summary>
+          <label>Mode
+            <select name="parentingMode"><option value="average_days" selected>Average days</option><option value="per_child_days">Per child days</option></select>
+          </label>
+          <div class="grid2">
+            <label>NCP parenting days average <input type="number" step="0.1" name="ncpDaysAverage" value="80" min="0" max="182.5"/></label>
+            <label>Child 1 NCP days <input type="number" step="0.1" name="child1NcpDays" value="80" min="0" max="182.5"/></label>
+            <label>Child 2 NCP days <input type="number" step="0.1" name="child2NcpDays" value="80" min="0" max="182.5"/></label>
+          </div>
+        </details>
       </section>
 
       <section class="card">
@@ -62,7 +69,7 @@
         <label>Health insurance amount <input type="number" step="0.01" name="healthAmount" value="0"/></label>
         <label>Health payer <select name="healthPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
         <label>Health attribution mode <select name="healthAttributionMode"><option value="child_only_known">Child-only known</option><option value="prorated_family_plan">Prorated family plan</option></select></label>
-        <div class="grid2">
+        <div id="familyPlanFields" class="grid2" hidden>
           <label>Family plan covered persons <input type="number" step="1" name="familyPlanTotalCoveredPersons" value="0"/></label>
           <label>Children in case covered <input type="number" step="1" name="familyPlanChildrenInCaseCovered" value="0"/></label>
         </div>
@@ -70,7 +77,8 @@
         <label>Child care payer <select name="childCarePayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
       </section>
 
-      <section class="card">
+      <details class="card">
+        <summary>Advanced deviation and income controls</summary>
         <h2>Deviation estimates (court-discretionary)</h2>
         <div class="grid2">
           <label><input type="checkbox" name="dentalEnabled"/> Include dental deviation</label>
@@ -81,13 +89,13 @@
           <label>Vision amount <input type="number" step="0.01" name="visionAmount" value="0"/></label>
           <label>Vision payer <select name="visionPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
         </div>
-      </section>
 
-      <section class="card">
-        <h2>High-income handling</h2>
-        <label>Mode <select name="highIncomeMode"><option value="statutory" selected>Statutory Presumptive</option><option value="planning">Planning / What-if High-Income</option></select></label>
-        <label>Manual high-income upward deviation <input type="number" step="0.01" name="manualUpwardDeviation" value="0"/></label>
-      </section>
+        <div id="highIncomeControls" hidden>
+          <h2>High-income handling</h2>
+          <label>Mode <select name="highIncomeMode"><option value="statutory" selected>Statutory Presumptive</option><option value="planning">Planning / What-if High-Income</option></select></label>
+          <label>Manual high-income upward deviation <input type="number" step="0.01" name="manualUpwardDeviation" value="0"/></label>
+        </div>
+      </details>
 
       <section class="card">
         <h2>Save / Load / Copy summary</h2>
@@ -99,8 +107,12 @@
           <button type="button" id="resetDefaultsBtn">Reset defaults</button>
           <button type="button" id="copySummaryBtn">Copy summary</button>
         </div>
-        <label><input type="checkbox" name="debugMode"/> Debug mode</label>
       </section>
+
+      <details class="card">
+        <summary>Developer options</summary>
+        <label><input type="checkbox" name="debugMode"/> Debug mode</label>
+      </details>
 
       <ul id="errors" class="errors"></ul>
     </form>
