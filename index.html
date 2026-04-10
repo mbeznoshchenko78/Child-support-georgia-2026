@@ -1,1 +1,113 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Hello World</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Georgia Child Support 2026 Estimate Calculator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Georgia Child Support 2026 Estimate Calculator</h1>
+    <p>Planning estimate tool only — not the official worksheet and not legal advice.</p>
+  </header>
+
+  <main class="layout">
+    <form id="calcForm" class="card-stack">
+      <section class="card">
+        <h2>Case setup</h2>
+        <label>Number of children
+          <select name="childCount"><option value="1" selected>1</option><option value="2">2</option><option value="3">3 (unsupported)</option></select>
+        </label>
+        <label>Court-ordered parenting time
+          <select name="courtOrderedParentingTime"><option value="yes" selected>Yes</option><option value="no">No</option></select>
+        </label>
+        <label><input type="checkbox" name="splitParentingCase" /> Split parenting case (unsupported)</label>
+        <label><input type="checkbox" name="courtDesignatedNcpOverride" /> Court designated NCP override</label>
+      </section>
+
+      <section class="card">
+        <h2>Income and Schedule B adjustments</h2>
+        <div class="grid2">
+          <label>CP gross monthly <input type="number" step="0.01" name="cpGrossMonthly" value="15000" /></label>
+          <label>NCP gross monthly <input type="number" step="0.01" name="ncpGrossMonthly" value="25000" /></label>
+        </div>
+        <details>
+          <summary>Advanced but required when applicable</summary>
+          <div class="grid2">
+            <label>CP self-employment tax adjustment <input type="number" step="0.01" name="cpSelfEmploymentTaxAdj" value="0"/></label>
+            <label>NCP self-employment tax adjustment <input type="number" step="0.01" name="ncpSelfEmploymentTaxAdj" value="0"/></label>
+            <label>CP preexisting support orders <input type="number" step="0.01" name="cpPreexistingOrdersAdj" value="0"/></label>
+            <label>NCP preexisting support orders <input type="number" step="0.01" name="ncpPreexistingOrdersAdj" value="0"/></label>
+            <label>CP qualified-children adjustment <input type="number" step="0.01" name="cpQualifiedChildrenAdj" value="0"/></label>
+            <label>NCP qualified-children adjustment <input type="number" step="0.01" name="ncpQualifiedChildrenAdj" value="0"/></label>
+          </div>
+        </details>
+      </section>
+
+      <section class="card">
+        <h2>Parenting time (Schedule C)</h2>
+        <label>Mode
+          <select name="parentingMode"><option value="average_days" selected>Average days</option><option value="per_child_days">Per child days</option></select>
+        </label>
+        <div class="grid2">
+          <label>NCP parenting days average <input type="number" step="0.1" name="ncpDaysAverage" value="80" min="0" max="182.5"/></label>
+          <label>Child 1 NCP days <input type="number" step="0.1" name="child1NcpDays" value="80" min="0" max="182.5"/></label>
+          <label>Child 2 NCP days <input type="number" step="0.1" name="child2NcpDays" value="80" min="0" max="182.5"/></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Additional expenses</h2>
+        <label>Health insurance amount <input type="number" step="0.01" name="healthAmount" value="0"/></label>
+        <label>Health payer <select name="healthPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
+        <label>Health attribution mode <select name="healthAttributionMode"><option value="child_only_known">Child-only known</option><option value="prorated_family_plan">Prorated family plan</option></select></label>
+        <div class="grid2">
+          <label>Family plan covered persons <input type="number" step="1" name="familyPlanTotalCoveredPersons" value="0"/></label>
+          <label>Children in case covered <input type="number" step="1" name="familyPlanChildrenInCaseCovered" value="0"/></label>
+        </div>
+        <label>Work-related child care <input type="number" step="0.01" name="childCareAmount" value="0"/></label>
+        <label>Child care payer <select name="childCarePayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
+      </section>
+
+      <section class="card">
+        <h2>Deviation estimates (court-discretionary)</h2>
+        <div class="grid2">
+          <label><input type="checkbox" name="dentalEnabled"/> Include dental deviation</label>
+          <label>Dental amount <input type="number" step="0.01" name="dentalAmount" value="0"/></label>
+          <label>Dental payer <select name="dentalPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
+
+          <label><input type="checkbox" name="visionEnabled"/> Include vision deviation</label>
+          <label>Vision amount <input type="number" step="0.01" name="visionAmount" value="0"/></label>
+          <label>Vision payer <select name="visionPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>High-income handling</h2>
+        <label>Mode <select name="highIncomeMode"><option value="statutory" selected>Statutory Presumptive</option><option value="planning">Planning / What-if High-Income</option></select></label>
+        <label>Manual high-income upward deviation <input type="number" step="0.01" name="manualUpwardDeviation" value="0"/></label>
+      </section>
+
+      <section class="card">
+        <h2>Save / Load / Copy summary</h2>
+        <select id="scenarioSelect"></select>
+        <div class="actions">
+          <button type="button" id="saveScenarioBtn">Save</button>
+          <button type="button" id="loadScenarioBtn">Load</button>
+          <button type="button" id="deleteScenarioBtn">Delete</button>
+          <button type="button" id="resetDefaultsBtn">Reset defaults</button>
+          <button type="button" id="copySummaryBtn">Copy summary</button>
+        </div>
+        <label><input type="checkbox" name="debugMode"/> Debug mode</label>
+      </section>
+
+      <ul id="errors" class="errors"></ul>
+    </form>
+
+    <aside id="results" class="results"></aside>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
