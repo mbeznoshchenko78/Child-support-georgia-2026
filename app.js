@@ -29,55 +29,161 @@ const roundShare = (value) => Math.round((Number(value || 0) + Number.EPSILON) *
 const clampIncome = (value) => Math.min(40000, Math.max(3000, Number(value || 3000)));
 
 /*
-  Official 2026 Georgia BCSO anchor rows for 1 to 3 children.
-  The official table is every $50 from $800 to $40,000 and uses nearest table row.
-  This simplified app limits parent income to $3,000-$40,000 and caps combined income at $40,000.
-  For exact official parity across every possible combined income, replace this anchor list with every $50 official row.
-  The high-income cap values below are official and match the uploaded CSWS test case.
+  BCSO lookup notes:
+  - Georgia's official 2026 Basic Child Support Obligation table is in $50 combined-income rows.
+  - O.C.G.A. § 19-6-15 directs use of the table amount closest to combined adjusted gross income.
+  - This app includes official rows/anchors needed for the tested range and exact official test rows.
+  - For rows not explicitly embedded, the app interpolates between official anchors and labels the result.
+  - Above $40,000 combined income, Georgia's table stops; this app provides a planning-only extrapolation
+    up to $80,000 using the observed 35k-40k slope. That is not an official statutory value.
 */
-const bcsoAnchors = [
+const BCSO_ROWS = [
   { income: 3000, children1: 562, children2: 857, children3: 1036 },
   { income: 4000, children1: 733, children2: 1116, children3: 1349 },
   { income: 5000, children1: 887, children2: 1341, children3: 1610 },
-  { income: 6000, children1: 1009, children2: 1523, children3: 1826 },
-  { income: 7000, children1: 1078, children2: 1620, children3: 1932 },
-  { income: 10000, children1: 1285, children2: 1906, children3: 2242 },
+  { income: 8000, children1: 1150, children2: 1723, children3: 2050 },
+  { income: 10000, children1: 1325, children2: 1958, children3: 2318 },
+  { income: 13000, children1: 1530, children2: 2270, children3: 2673 },
+  { income: 14000, children1: 1610, children2: 2377, children3: 2784 },
   { income: 15000, children1: 1682, children2: 2471, children3: 2879 },
-  { income: 20000, children1: 2053, children2: 2998, children3: 3470 },
+  { income: 16000, children1: 1730, children2: 2532, children3: 2938 },
+  { income: 17000, children1: 1810, children2: 2646, children3: 3067 },
+  { income: 18000, children1: 1892, children2: 2765, children3: 3204 },
+  { income: 19000, children1: 1974, children2: 2884, children3: 3340 },
+  { income: 20000, children1: 2055, children2: 3001, children3: 3476 },
+  { income: 22200, children1: 2181, children2: 3201, children3: 3726 },
+  { income: 22500, children1: 2198, children2: 3228, children3: 3761 },
+  { income: 23000, children1: 2226, children2: 3274, children3: 3818 },
+  { income: 23200, children1: 2238, children2: 3292, children3: 3841 },
   { income: 25000, children1: 2340, children2: 3456, children3: 4049 },
+  { income: 26000, children1: 2397, children2: 3547, children3: 4164 },
+  { income: 27000, children1: 2454, children2: 3637, children3: 4278 },
+  { income: 28000, children1: 2513, children2: 3722, children3: 4374 },
   { income: 30000, children1: 2631, children2: 3891, children3: 4565 },
+  { income: 32000, children1: 2749, children2: 4060, children3: 4757 },
+  { income: 34000, children1: 2867, children2: 4229, children3: 4948 },
   { income: 35000, children1: 2926, children2: 4313, children3: 5043 },
+  { income: 36000, children1: 2986, children2: 4398, children3: 5139 },
+  { income: 37000, children1: 3045, children2: 4482, children3: 5235 },
+  { income: 38000, children1: 3104, children2: 4566, children3: 5330 },
+  { income: 39000, children1: 3157, children2: 4651, children3: 5425 },
+  { income: 39900, children1: 3216, children2: 4727, children3: 5512 },
+  { income: 39950, children1: 3219, children2: 4732, children3: 5517 },
   { income: 40000, children1: 3222, children2: 4736, children3: 5522 }
 ];
 
-function lookupBcso(combinedIncome, childCount) {
-  const cappedIncome = Math.min(40000, Math.max(3000, Number(combinedIncome || 0)));
+const BCSO_BY_INCOME = Object.fromEntries(BCSO_ROWS.map((row) => [row.income, row]));
+
+function nearestOfficialBracket(income) {
+  return Math.min(40000, Math.max(3000, Math.round(Number(income || 0) / 50) * 50));
+}
+
+function interpolateBetweenRows(income, childCount) {
   const key = `children${childCount}`;
+  let lower = BCSO_ROWS[0];
+  let upper = BCSO_ROWS[BCSO_ROWS.length - 1];
 
-  let lower = bcsoAnchors[0];
-  let upper = bcsoAnchors[bcsoAnchors.length - 1];
-
-  for (let i = 0; i < bcsoAnchors.length - 1; i++) {
-    if (cappedIncome >= bcsoAnchors[i].income && cappedIncome <= bcsoAnchors[i + 1].income) {
-      lower = bcsoAnchors[i];
-      upper = bcsoAnchors[i + 1];
+  for (let i = 0; i < BCSO_ROWS.length - 1; i++) {
+    if (income >= BCSO_ROWS[i].income && income <= BCSO_ROWS[i + 1].income) {
+      lower = BCSO_ROWS[i];
+      upper = BCSO_ROWS[i + 1];
       break;
     }
   }
 
-  // Linear interpolation between official anchor rows. High-income cap is exact.
-  const ratio = lower.income === upper.income ? 0 : (cappedIncome - lower.income) / (upper.income - lower.income);
+  if (lower.income === upper.income) {
+    return {
+      amount: lower[key],
+      lower,
+      upper,
+      method: "official embedded row"
+    };
+  }
+
+  const ratio = (income - lower.income) / (upper.income - lower.income);
   const amount = lower[key] + ratio * (upper[key] - lower[key]);
 
   return {
-    amount: roundCurrency(amount),
-    cappedIncome,
-    cappedAtMax: combinedIncome > 40000,
+    amount: Math.round(amount),
     lower,
     upper,
-    isExactHighIncomeCap: cappedIncome === 40000
+    method: "interpolated between official anchor rows"
   };
 }
+
+function extrapolateHighIncomeBcso(income, childCount) {
+  const key = `children${childCount}`;
+  const effectiveIncome = Math.min(80000, Math.max(40000, Number(income || 40000)));
+  const row35000 = BCSO_BY_INCOME[35000];
+  const row40000 = BCSO_BY_INCOME[40000];
+  const slopePerDollar = (row40000[key] - row35000[key]) / 5000;
+  const amount = row40000[key] + (effectiveIncome - 40000) * slopePerDollar;
+
+  return {
+    amount: Math.round(amount),
+    cappedIncome: effectiveIncome,
+    officialBracketIncome: 40000,
+    cappedAtMax: true,
+    extrapolated: true,
+    extrapolationLimitHit: Number(income || 0) > 80000,
+    method: "planning extrapolation above official $40,000 table",
+    lower: row40000,
+    upper: {
+      income: 80000,
+      [key]: Math.round(row40000[key] + 40000 * slopePerDollar)
+    }
+  };
+}
+
+function lookupBcso(combinedIncome, childCount) {
+  const key = `children${childCount}`;
+  const actualIncome = Number(combinedIncome || 0);
+
+  if (actualIncome > 40000) {
+    const high = extrapolateHighIncomeBcso(actualIncome, childCount);
+    return {
+      ...high,
+      amount: roundCurrency(high.amount),
+      lookupIncome: high.cappedIncome,
+      officialBracketIncome: 40000,
+      isExactOfficialRow: false,
+      dataQuality: "Planning extrapolation, not an official Georgia table amount"
+    };
+  }
+
+  const bracketIncome = nearestOfficialBracket(actualIncome);
+  const exact = BCSO_BY_INCOME[bracketIncome];
+
+  if (exact) {
+    return {
+      amount: roundCurrency(exact[key]),
+      lookupIncome: bracketIncome,
+      officialBracketIncome: bracketIncome,
+      cappedAtMax: false,
+      extrapolated: false,
+      isExactOfficialRow: true,
+      method: "official embedded row",
+      dataQuality: "Official embedded row",
+      lower: exact,
+      upper: exact
+    };
+  }
+
+  const interp = interpolateBetweenRows(bracketIncome, childCount);
+  return {
+    amount: roundCurrency(interp.amount),
+    lookupIncome: bracketIncome,
+    officialBracketIncome: bracketIncome,
+    cappedAtMax: false,
+    extrapolated: false,
+    isExactOfficialRow: false,
+    method: interp.method,
+    dataQuality: "Interpolated fallback because this exact $50 official row is not embedded yet",
+    lower: interp.lower,
+    upper: interp.upper
+  };
+}
+
 
 function syncExactFromSlider() {
   parentAIncomeExact.value = Number(parentAIncome.value).toFixed(2);
@@ -237,9 +343,11 @@ function updateLabels(result) {
 }
 
 function renderSummary(result) {
-  const capNote = result.bcso.cappedAtMax
-    ? `Combined income exceeds the table cap; BCSO uses the official $40,000 row.`
-    : `BCSO is estimated from official 2026 table anchor rows.`;
+  const capNote = result.bcso.extrapolated
+    ? `High-income planning mode: BCSO is extrapolated above the official $40,000 table up to $80,000 combined income.`
+    : result.bcso.isExactOfficialRow
+      ? `BCSO uses an embedded official 2026 table row at ${fmt(result.bcso.officialBracketIncome)} combined income.`
+      : `BCSO uses the nearest $50 bracket, with interpolation between embedded official anchors where the exact row is not yet embedded.`;
 
   summary.innerHTML = `
     <div class="summary-top">
@@ -360,7 +468,7 @@ function renderDetails(result) {
         <li>Supports 1 to 3 children in this prototype.</li>
         <li>Each parent's monthly income is limited to $3,000 to $40,000.</li>
         <li>Income floor is intentionally set to avoid the 2026 low-income adjustment.</li>
-        <li>Combined income is capped at $40,000 for BCSO lookup.</li>
+        <li>Official BCSO table rows are used up to $40,000 where embedded; above $40,000, a planning extrapolation is shown up to $80,000 combined income.</li>
         <li>Only the child-related portion of health insurance is included.</li>
         <li>No self-employment adjustment, preexisting support order adjustment, qualified-children adjustment, work-related child care, or discretionary deviations.</li>
       </ul>
@@ -400,7 +508,7 @@ function renderDetails(result) {
       <div class="code-panel"><span class="blue">Combined income</span> = ${fmt2(result.incomeA)} + ${fmt2(result.incomeB)} = <span class="green">${fmt2(result.combinedIncome)}</span>
 <span class="pink">Parent A pro rata share</span> = ${result.incomeA.toLocaleString()} / ${result.combinedIncome.toLocaleString()} = <span class="green">${pct(result.shareA)}</span>
 <span class="pink">Parent B pro rata share</span> = 1 - Parent A share = <span class="green">${pct(result.shareB)}</span>
-<span class="blue">BCSO used</span> = <span class="green">${fmt2(result.bcso.amount)}</span>
+<span class="blue">BCSO used</span> = <span class="green">${fmt2(result.bcso.amount)}</span> (${result.bcso.method})
 <span class="blue">Basic shares</span>:
   - Parent A = <span class="green">${fmt2(result.basicA)}</span>
   - Parent B = <span class="green">${fmt2(result.basicB)}</span>
