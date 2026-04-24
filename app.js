@@ -3,6 +3,8 @@ const $ = (selector) => document.querySelector(selector);
 const form = $("#calcForm");
 const parentAIncome = $("#parentAIncome");
 const parentBIncome = $("#parentBIncome");
+const parentAIncomeExact = $("#parentAIncomeExact");
+const parentBIncomeExact = $("#parentBIncomeExact");
 const parentADays = $("#parentADays");
 const healthPremium = $("#healthPremium");
 const summary = $("#summary");
@@ -22,59 +24,77 @@ const fmt2 = (value) => Number(value || 0).toLocaleString("en-US", {
 });
 
 const pct = (value) => `${(Number(value || 0) * 100).toFixed(2)}%`;
-
 const roundCurrency = (value) => Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+const roundShare = (value) => Math.round((Number(value || 0) + Number.EPSILON) * 10000) / 10000;
+const clampIncome = (value) => Math.min(40000, Math.max(3000, Number(value || 3000)));
 
-const bcsoTable = [
-  { income: 0, children1: 0, children2: 0, children3: 0 },
-  { income: 3000, children1: 510, children2: 792, children3: 948 },
-  { income: 3500, children1: 595, children2: 924, children3: 1106 },
-  { income: 4000, children1: 680, children2: 1056, children3: 1264 },
-  { income: 4500, children1: 765, children2: 1188, children3: 1422 },
-  { income: 5000, children1: 850, children2: 1320, children3: 1580 },
-  { income: 6000, children1: 1020, children2: 1584, children3: 1896 },
-  { income: 7000, children1: 1190, children2: 1848, children3: 2212 },
-  { income: 8000, children1: 1360, children2: 2112, children3: 2528 },
-  { income: 9000, children1: 1530, children2: 2376, children3: 2844 },
-  { income: 10000, children1: 1700, children2: 2640, children3: 3160 },
-  { income: 12000, children1: 2040, children2: 3168, children3: 3792 },
-  { income: 14000, children1: 2380, children2: 3696, children3: 4424 },
-  { income: 16000, children1: 2720, children2: 4224, children3: 5056 },
-  { income: 18000, children1: 3060, children2: 4752, children3: 5688 },
-  { income: 20000, children1: 3400, children2: 5280, children3: 6320 },
-  { income: 25000, children1: 4250, children2: 6600, children3: 7900 },
-  { income: 30000, children1: 5100, children2: 7920, children3: 9480 },
-  { income: 35000, children1: 5950, children2: 9240, children3: 11060 },
-  { income: 40000, children1: 6800, children2: 10560, children3: 12640 }
+/*
+  Official 2026 Georgia BCSO anchor rows for 1 to 3 children.
+  The official table is every $50 from $800 to $40,000 and uses nearest table row.
+  This simplified app limits parent income to $3,000-$40,000 and caps combined income at $40,000.
+  For exact official parity across every possible combined income, replace this anchor list with every $50 official row.
+  The high-income cap values below are official and match the uploaded CSWS test case.
+*/
+const bcsoAnchors = [
+  { income: 3000, children1: 562, children2: 857, children3: 1036 },
+  { income: 4000, children1: 733, children2: 1116, children3: 1349 },
+  { income: 5000, children1: 887, children2: 1341, children3: 1610 },
+  { income: 6000, children1: 1009, children2: 1523, children3: 1826 },
+  { income: 7000, children1: 1078, children2: 1620, children3: 1932 },
+  { income: 10000, children1: 1285, children2: 1906, children3: 2242 },
+  { income: 15000, children1: 1682, children2: 2471, children3: 2879 },
+  { income: 20000, children1: 2053, children2: 2998, children3: 3470 },
+  { income: 25000, children1: 2340, children2: 3456, children3: 4049 },
+  { income: 30000, children1: 2631, children2: 3891, children3: 4565 },
+  { income: 35000, children1: 2926, children2: 4313, children3: 5043 },
+  { income: 40000, children1: 3222, children2: 4736, children3: 5522 }
 ];
 
-function interpolateBcso(combinedIncome, childCount) {
-  const lookupIncome = Math.min(40000, Math.max(3000, Number(combinedIncome || 0)));
+function lookupBcso(combinedIncome, childCount) {
+  const cappedIncome = Math.min(40000, Math.max(3000, Number(combinedIncome || 0)));
   const key = `children${childCount}`;
-  let lower = bcsoTable[0];
-  let upper = bcsoTable[bcsoTable.length - 1];
 
-  for (let i = 0; i < bcsoTable.length - 1; i++) {
-    if (lookupIncome >= bcsoTable[i].income && lookupIncome <= bcsoTable[i + 1].income) {
-      lower = bcsoTable[i];
-      upper = bcsoTable[i + 1];
+  let lower = bcsoAnchors[0];
+  let upper = bcsoAnchors[bcsoAnchors.length - 1];
+
+  for (let i = 0; i < bcsoAnchors.length - 1; i++) {
+    if (cappedIncome >= bcsoAnchors[i].income && cappedIncome <= bcsoAnchors[i + 1].income) {
+      lower = bcsoAnchors[i];
+      upper = bcsoAnchors[i + 1];
       break;
     }
   }
 
-  if (lower.income === upper.income) {
-    return { amount: roundCurrency(lower[key]), lookupIncome, lower, upper };
-  }
-
-  const ratio = (lookupIncome - lower.income) / (upper.income - lower.income);
+  // Linear interpolation between official anchor rows. High-income cap is exact.
+  const ratio = lower.income === upper.income ? 0 : (cappedIncome - lower.income) / (upper.income - lower.income);
   const amount = lower[key] + ratio * (upper[key] - lower[key]);
-  return { amount: roundCurrency(amount), lookupIncome, lower, upper };
+
+  return {
+    amount: roundCurrency(amount),
+    cappedIncome,
+    cappedAtMax: combinedIncome > 40000,
+    lower,
+    upper,
+    isExactHighIncomeCap: cappedIncome === 40000
+  };
+}
+
+function syncExactFromSlider() {
+  parentAIncomeExact.value = Number(parentAIncome.value).toFixed(2);
+  parentBIncomeExact.value = Number(parentBIncome.value).toFixed(2);
+}
+
+function syncSliderFromExact() {
+  parentAIncomeExact.value = clampIncome(parentAIncomeExact.value).toFixed(2);
+  parentBIncomeExact.value = clampIncome(parentBIncomeExact.value).toFixed(2);
+  parentAIncome.value = Math.round(Number(parentAIncomeExact.value) / 50) * 50;
+  parentBIncome.value = Math.round(Number(parentBIncomeExact.value) / 50) * 50;
 }
 
 function getFormState() {
   const childCount = Number(new FormData(form).get("childCount"));
-  const incomeA = Number(parentAIncome.value);
-  const incomeB = Number(parentBIncome.value);
+  const incomeA = clampIncome(parentAIncomeExact.value || parentAIncome.value);
+  const incomeB = clampIncome(parentBIncomeExact.value || parentBIncome.value);
   const daysA = Number(parentADays.value);
   const daysB = 365 - daysA;
   const health = Math.max(0, Number(healthPremium.value || 0));
@@ -90,34 +110,39 @@ function getRoles(state) {
   if (state.daysB > state.daysA) {
     return { cp: "B", ncp: "A", cpLabel: "Parent B", ncpLabel: "Parent A" };
   }
-
   if (state.incomeA >= state.incomeB) {
     return { cp: "B", ncp: "A", cpLabel: "Parent B", ncpLabel: "Parent A" };
   }
   return { cp: "A", ncp: "B", cpLabel: "Parent A", ncpLabel: "Parent B" };
 }
 
-function applyParentingAdjustment({ ncpDays, cpDays, cpBasicShare, ncpBasicShare, bcsoAmount }) {
+function calculateParentingTimeAdjustment({ ncpDays, cpDays, cpBasicShare, ncpBasicShare }) {
   const A = Math.pow(ncpDays, 2.5);
   const B = Math.pow(cpDays, 2.5);
   const C = A * cpBasicShare;
   const D = B * ncpBasicShare;
   const E = C - D;
   const F = E / (A + B || 1);
-  const ncpAdjustedBasic = roundCurrency(ncpBasicShare + F);
-  const cpAdjustedBasic = roundCurrency(bcsoAmount - ncpAdjustedBasic);
 
-  return { A, B, C, D, E, F, ncpAdjustedBasic, cpAdjustedBasic };
+  // Official Schedule C displays the positive adjustment to subtract from the NCP's BCSO share.
+  const adjustmentAmount = Math.max(0, roundCurrency(ncpBasicShare + F));
+  const ncpAfterParenting = roundCurrency(ncpBasicShare - adjustmentAmount);
+
+  return { A, B, C, D, E, F, adjustmentAmount, ncpAfterParenting };
 }
 
 function calculate() {
   const state = getFormState();
   const roles = getRoles(state);
 
-  const combinedIncome = state.incomeA + state.incomeB;
-  const shareA = state.incomeA / combinedIncome;
-  const shareB = state.incomeB / combinedIncome;
-  const bcso = interpolateBcso(combinedIncome, state.childCount);
+  const combinedIncome = roundCurrency(state.incomeA + state.incomeB);
+
+  // Official CSWS displays and applies percentages rounded to two percentage decimals.
+  const rawShareA = state.incomeA / combinedIncome;
+  const shareA = roundShare(rawShareA);
+  const shareB = roundShare(1 - shareA);
+
+  const bcso = lookupBcso(combinedIncome, state.childCount);
 
   const basicA = roundCurrency(bcso.amount * shareA);
   const basicB = roundCurrency(bcso.amount * shareB);
@@ -129,41 +154,38 @@ function calculate() {
   const cpDays = roles.cp === "A" ? state.daysA : state.daysB;
   const ncpDays = roles.ncp === "A" ? state.daysA : state.daysB;
 
-  const parenting = applyParentingAdjustment({
+  const parenting = calculateParentingTimeAdjustment({
     ncpDays,
     cpDays,
     cpBasicShare: cpBasic,
-    ncpBasicShare: ncpBasic,
-    bcsoAmount: bcso.amount
+    ncpBasicShare: ncpBasic
   });
 
   const healthShareA = roundCurrency(state.health * shareA);
   const healthShareB = roundCurrency(state.health * shareB);
-  const payerShare = state.healthPayer === "A" ? healthShareA : healthShareB;
-  const otherShare = state.healthPayer === "A" ? healthShareB : healthShareA;
-
   const healthShareForNcp = roles.ncp === "A" ? healthShareA : healthShareB;
-  const ncpHealthCredit = state.healthPayer === roles.ncp ? state.health : 0;
+  const healthPaidByNcp = state.healthPayer === roles.ncp ? state.health : 0;
 
-  const preHealthTransfer = parenting.ncpAdjustedBasic;
-  const finalTransfer = roundCurrency(preHealthTransfer + healthShareForNcp - ncpHealthCredit);
+  const ncpAfterHealthShare = roundCurrency(parenting.ncpAfterParenting + healthShareForNcp);
+  const presumptiveNcp = roundCurrency(ncpAfterHealthShare - healthPaidByNcp);
+  const finalAmount = Math.round(Math.abs(presumptiveNcp));
 
-  const payer = finalTransfer >= 0 ? roles.ncpLabel : roles.cpLabel;
-  const recipient = finalTransfer >= 0 ? roles.cpLabel : roles.ncpLabel;
-  const finalAmount = Math.abs(finalTransfer);
+  const payer = presumptiveNcp >= 0 ? roles.ncpLabel : roles.cpLabel;
+  const recipient = presumptiveNcp >= 0 ? roles.cpLabel : roles.ncpLabel;
 
-  const healthCreditText = state.healthPayer === roles.ncp
-    ? `${roles.ncpLabel} credit`
-    : `${roles.cpLabel} credit`;
+  const healthAdjustmentText = state.healthPayer === roles.ncp
+    ? `${roles.ncpLabel} premium credit`
+    : `${roles.ncpLabel} pays pro-rata add-on`;
 
-  const healthCreditAmount = state.healthPayer === roles.ncp
-    ? -roundCurrency(state.health - healthShareForNcp)
-    : -roundCurrency(otherShare);
+  const healthAdjustmentAmount = state.healthPayer === roles.ncp
+    ? -roundCurrency(healthPaidByNcp - healthShareForNcp)
+    : healthShareForNcp;
 
   return {
     ...state,
     roles,
     combinedIncome,
+    rawShareA,
     shareA,
     shareB,
     bcso,
@@ -178,17 +200,15 @@ function calculate() {
     parenting,
     healthShareA,
     healthShareB,
-    payerShare,
-    otherShare,
     healthShareForNcp,
-    ncpHealthCredit,
-    preHealthTransfer,
-    finalTransfer,
+    healthPaidByNcp,
+    ncpAfterHealthShare,
+    presumptiveNcp,
+    finalAmount,
     payer,
     recipient,
-    finalAmount,
-    healthCreditText,
-    healthCreditAmount
+    healthAdjustmentText,
+    healthAdjustmentAmount
   };
 }
 
@@ -204,8 +224,10 @@ function updateLabels(result) {
 
   $("#parentALabel").innerHTML = `2. Parent A monthly income - ${roleMarkup(roleA)}`;
   $("#parentBLabel").innerHTML = `3. Parent B monthly income - ${roleMarkup(roleB)}`;
-  $("#parentAIncomeOut").textContent = fmt(result.incomeA);
-  $("#parentBIncomeOut").textContent = fmt(result.incomeB);
+
+  parentAIncomeExact.value = Number(result.incomeA).toFixed(2);
+  parentBIncomeExact.value = Number(result.incomeB).toFixed(2);
+
   $("#parentADaysOut").textContent = `Parent A: ${result.daysA} days`;
   $("#parentBDaysOut").textContent = `Parent B: ${result.daysB} days`;
   $("#healthPayerHint").textContent = `Simplified assumption: Parent ${result.healthPayer} pays this child-related premium.`;
@@ -215,6 +237,10 @@ function updateLabels(result) {
 }
 
 function renderSummary(result) {
+  const capNote = result.bcso.cappedAtMax
+    ? `Combined income exceeds the table cap; BCSO uses the official $40,000 row.`
+    : `BCSO is estimated from official 2026 table anchor rows.`;
+
   summary.innerHTML = `
     <div class="summary-top">
       <div class="care-icon">♡</div>
@@ -236,13 +262,13 @@ function renderSummary(result) {
       <div class="summary-row">
         <span class="icon-dot">A</span>
         <span class="row-label">Parent A monthly income (${result.roles.ncp === "A" ? "Non-custodial" : "Custodial"})</span>
-        <span class="row-value">${fmt(result.incomeA)}</span>
+        <span class="row-value">${fmt2(result.incomeA)}</span>
       </div>
 
       <div class="summary-row">
         <span class="icon-dot teal">B</span>
         <span class="row-label">Parent B monthly income (${result.roles.ncp === "B" ? "Non-custodial" : "Custodial"})</span>
-        <span class="row-value">${fmt(result.incomeB)}</span>
+        <span class="row-value">${fmt2(result.incomeB)}</span>
       </div>
 
       <div class="summary-row">
@@ -252,9 +278,15 @@ function renderSummary(result) {
       </div>
 
       <div class="summary-row">
+        <span class="icon-dot">Σ</span>
+        <span class="row-label">BCSO used</span>
+        <span class="row-value">${fmt2(result.bcso.amount)}</span>
+      </div>
+
+      <div class="summary-row">
         <span class="icon-dot">♡</span>
         <span class="row-label">Health insurance premium</span>
-        <span class="row-value">${fmt(result.health)}</span>
+        <span class="row-value">${fmt2(result.health)}</span>
       </div>
 
       <div class="summary-row">
@@ -274,20 +306,31 @@ function renderSummary(result) {
         <div>
           <h4>Health insurance adjustment</h4>
           <p>${result.healthPayer === result.roles.ncp
-            ? `${result.roles.ncpLabel} pays the premium and receives credit for ${result.roles.cpLabel}'s share.`
-            : `${result.roles.cpLabel} pays the premium. ${result.roles.ncpLabel}'s share is added to the transfer.`}</p>
+            ? `${result.roles.ncpLabel} pays the premium and receives credit for the amount actually paid.`
+            : `${result.roles.cpLabel} pays the premium. ${result.roles.ncpLabel}'s pro-rata share is added.`}</p>
         </div>
         <div class="adjustment-amount">
-          <div>${result.healthCreditText}</div>
-          <div>${fmt2(result.healthCreditAmount)}</div>
+          <div>${result.healthAdjustmentText}</div>
+          <div>${fmt2(result.healthAdjustmentAmount)}</div>
         </div>
       </div>
 
-      <div class="summary-row">
+      <div class="csws-box">
+        <h4>CSWS-style NCP calculation</h4>
+        <div class="csws-line"><span>NCP BCSO share</span><strong>${fmt2(result.ncpBasic)}</strong></div>
+        <div class="csws-line"><span>Less parenting adjustment</span><strong>-${fmt2(result.parenting.adjustmentAmount)}</strong></div>
+        <div class="csws-line"><span>Add NCP health share</span><strong>${fmt2(result.healthShareForNcp)}</strong></div>
+        <div class="csws-line"><span>Less health actually paid by NCP</span><strong>-${fmt2(result.healthPaidByNcp)}</strong></div>
+        <div class="csws-line total"><span>Presumptive before whole-dollar rounding</span><strong>${fmt2(result.presumptiveNcp)}</strong></div>
+      </div>
+
+      <div class="summary-row strong-row">
         <span class="icon-dot">↔</span>
         <span class="row-label">Estimated transfer</span>
         <span class="row-value">${result.payer} pays ${result.recipient}</span>
       </div>
+
+      <p class="hint">${capNote}</p>
     </div>
 
     <div class="summary-footer">ⓘ Planning estimate only. Not legal advice.</div>
@@ -303,10 +346,10 @@ function renderDetails(result) {
       <h3><span class="detail-icon">▤</span>1. Inputs used</h3>
       <ul>
         <li><strong>Number of children:</strong> ${result.childCount}</li>
-        <li><strong>Parent A monthly income:</strong> ${fmt(result.incomeA)}</li>
-        <li><strong>Parent B monthly income:</strong> ${fmt(result.incomeB)}</li>
+        <li><strong>Parent A monthly income:</strong> ${fmt2(result.incomeA)}</li>
+        <li><strong>Parent B monthly income:</strong> ${fmt2(result.incomeB)}</li>
         <li><strong>Parenting time:</strong> A ${result.daysA} days, B ${result.daysB} days</li>
-        <li><strong>Child-related health insurance premium:</strong> ${fmt(result.health)}</li>
+        <li><strong>Child-related health insurance premium:</strong> ${fmt2(result.health)}</li>
         <li><strong>Health insurance paid by:</strong> Parent ${result.healthPayer}</li>
       </ul>
     </article>
@@ -317,7 +360,7 @@ function renderDetails(result) {
         <li>Supports 1 to 3 children in this prototype.</li>
         <li>Each parent's monthly income is limited to $3,000 to $40,000.</li>
         <li>Income floor is intentionally set to avoid the 2026 low-income adjustment.</li>
-        <li>Parenting time is represented with one slider totaling 365 days.</li>
+        <li>Combined income is capped at $40,000 for BCSO lookup.</li>
         <li>Only the child-related portion of health insurance is included.</li>
         <li>No self-employment adjustment, preexisting support order adjustment, qualified-children adjustment, work-related child care, or discretionary deviations.</li>
       </ul>
@@ -327,13 +370,13 @@ function renderDetails(result) {
       <h3><span class="detail-icon">▦</span>3. Main calculation steps</h3>
       <ol>
         <li>Combine both parents' monthly incomes.</li>
-        <li>Determine each parent's pro rata share of combined income.</li>
-        <li>Reference the Georgia basic child-support schedule using combined income and number of children.</li>
+        <li>Round pro-rata income shares to two percentage decimals, matching the CSWS presentation.</li>
+        <li>Look up the BCSO using the 2026 Georgia table, capped at $40,000 combined income.</li>
         <li>Determine custodial and non-custodial parent from parenting days.</li>
-        <li>Apply the parenting-time adjustment.</li>
-        <li>Add the child-related health insurance premium as an additional expense.</li>
-        <li>Split that premium pro rata by income.</li>
-        <li>Credit the premium to the parent who actually pays it.</li>
+        <li>Calculate the parenting-time adjustment and subtract it from the NCP's BCSO share.</li>
+        <li>Split health insurance pro rata by income.</li>
+        <li>Add the NCP's pro-rata health share.</li>
+        <li>Subtract health premiums actually paid by the NCP.</li>
       </ol>
     </article>
 
@@ -342,8 +385,8 @@ function renderDetails(result) {
       <p>The child-related monthly health insurance premium is treated as an additional expense.</p>
       <ul>
         <li>It is split pro rata based on each parent's share of combined income.</li>
-        <li>Each parent's share is included in the calculation.</li>
-        <li>The amount actually paid by the parent who carries the insurance is credited against that parent's child-support obligation.</li>
+        <li>The NCP's share is added to the NCP's support amount.</li>
+        <li>If the NCP actually pays the premium, the actual amount paid is then deducted as a credit.</li>
       </ul>
       <div class="health-example">
         <strong>Example with these inputs</strong>
@@ -354,21 +397,26 @@ function renderDetails(result) {
 
     <article class="detail-card nerd-card">
       <h3><span class="detail-icon">⌘</span>5. Calculation steps for nerds 🤓</h3>
-      <div class="code-panel"><span class="blue">Combined income</span> = ${fmt(result.incomeA)} + ${fmt(result.incomeB)} = <span class="green">${fmt(result.combinedIncome)}</span>
+      <div class="code-panel"><span class="blue">Combined income</span> = ${fmt2(result.incomeA)} + ${fmt2(result.incomeB)} = <span class="green">${fmt2(result.combinedIncome)}</span>
 <span class="pink">Parent A pro rata share</span> = ${result.incomeA.toLocaleString()} / ${result.combinedIncome.toLocaleString()} = <span class="green">${pct(result.shareA)}</span>
-<span class="pink">Parent B pro rata share</span> = ${result.incomeB.toLocaleString()} / ${result.combinedIncome.toLocaleString()} = <span class="green">${pct(result.shareB)}</span>
-<span class="blue">BCSO estimate</span> = <span class="green">${fmt2(result.bcso.amount)}</span>
-<span class="blue">Health premium split</span>:
-  - Parent A = <span class="green">${fmt2(result.healthShareA)}</span> (${pct(result.shareA)})
-  - Parent B = <span class="green">${fmt2(result.healthShareB)}</span> (${pct(result.shareB)})
+<span class="pink">Parent B pro rata share</span> = 1 - Parent A share = <span class="green">${pct(result.shareB)}</span>
+<span class="blue">BCSO used</span> = <span class="green">${fmt2(result.bcso.amount)}</span>
+<span class="blue">Basic shares</span>:
+  - Parent A = <span class="green">${fmt2(result.basicA)}</span>
+  - Parent B = <span class="green">${fmt2(result.basicB)}</span>
 <span class="blue">Parenting-time roles</span>: NCP = ${result.roles.ncpLabel}, CP = ${result.roles.cpLabel}
-<span class="blue">Parenting-time inputs</span>: n_NCP = ${result.ncpDays} days, n_CP = ${result.cpDays} days
 <span class="yellow">Intermediate debug value A</span> = ${result.ncpDays}^2.5 ≈ ${Math.round(debugA).toLocaleString()}
 <span class="yellow">Intermediate debug value B</span> = ${result.cpDays}^2.5 ≈ ${Math.round(debugB).toLocaleString()}
+<span class="blue">Parenting adjustment</span> = <span class="green">${fmt2(result.parenting.adjustmentAmount)}</span>
 
-Yes, these giant numbers are weird intermediate values used by the math engine. 🚀
+CSWS-style:
+NCP BCSO share ${fmt2(result.ncpBasic)}
+- parenting adjustment ${fmt2(result.parenting.adjustmentAmount)}
++ NCP health share ${fmt2(result.healthShareForNcp)}
+- health paid by NCP ${fmt2(result.healthPaidByNcp)}
+= presumptive ${fmt2(result.presumptiveNcp)}
 
-<span class="green">Final estimated monthly child support</span> = ${fmt2(result.finalAmount)}
+<span class="green">Final whole-dollar estimated support</span> = ${fmt(result.finalAmount)}
 (${result.payer} pays ${result.recipient})</div>
     </article>
 
@@ -387,7 +435,7 @@ Yes, these giant numbers are weird intermediate values used by the math engine. 
           <strong>Georgia Child Support Commission FAQs</strong>
           <span>csc.georgiacourts.gov/faqs ↗</span>
         </a>
-        <a class="source-tile" href="https://law.justia.com/codes/georgia/title-19/chapter-6/section-19-6-15-d-1/" target="_blank" rel="noopener">
+        <a class="source-tile" href="https://csconlinecalc.georgiacourts.gov/media/childsupportstatute.pdf" target="_blank" rel="noopener">
           <strong>O.C.G.A. § 19-6-15</strong>
           <span>Georgia child support guidelines statute ↗</span>
         </a>
@@ -403,8 +451,33 @@ function render() {
   renderDetails(result);
 }
 
-form.addEventListener("input", render);
-form.addEventListener("change", render);
+parentAIncome.addEventListener("input", () => {
+  parentAIncomeExact.value = Number(parentAIncome.value).toFixed(2);
+  render();
+});
+parentBIncome.addEventListener("input", () => {
+  parentBIncomeExact.value = Number(parentBIncome.value).toFixed(2);
+  render();
+});
+parentAIncomeExact.addEventListener("change", () => {
+  parentAIncomeExact.value = clampIncome(parentAIncomeExact.value).toFixed(2);
+  parentAIncome.value = Math.round(Number(parentAIncomeExact.value) / 50) * 50;
+  render();
+});
+parentBIncomeExact.addEventListener("change", () => {
+  parentBIncomeExact.value = clampIncome(parentBIncomeExact.value).toFixed(2);
+  parentBIncome.value = Math.round(Number(parentBIncomeExact.value) / 50) * 50;
+  render();
+});
+
+form.addEventListener("input", (event) => {
+  if ([parentAIncome, parentBIncome, parentAIncomeExact, parentBIncomeExact].includes(event.target)) return;
+  render();
+});
+form.addEventListener("change", (event) => {
+  if ([parentAIncome, parentBIncome, parentAIncomeExact, parentBIncomeExact].includes(event.target)) return;
+  render();
+});
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   render();
@@ -412,7 +485,9 @@ form.addEventListener("submit", (event) => {
 
 $("#resetBtn").addEventListener("click", () => {
   form.reset();
+  syncExactFromSlider();
   render();
 });
 
+syncExactFromSlider();
 render();
