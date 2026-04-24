@@ -1,112 +1,119 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Georgia Child Support Calculator</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Georgia Child Support Calculator</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="page-shell">
-    <header class="hero">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">
-          <span>⚖</span>
+<main class="page-shell">
+  <header class="hero">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">⚖</div>
+      <div>
+        <h1>Georgia Child Support Calculator</h1>
+        <p>Simple 2026 planning estimate for 1 to 3 children.</p>
+      </div>
+    </div>
+    <div class="privacy-pill">🛡️ Private • Secure • No data is stored</div>
+  </header>
+
+  <section class="top-grid" aria-label="Calculator">
+    <form id="calcForm" class="calculator-card">
+      <section class="control-section">
+        <h2>1. Number of children</h2>
+        <div class="segmented" role="group" aria-label="Number of children">
+          <label><input type="radio" name="childCount" value="1" checked><span>1 child</span></label>
+          <label><input type="radio" name="childCount" value="2"><span>2 children</span></label>
+          <label><input type="radio" name="childCount" value="3"><span>3 children</span></label>
         </div>
+      </section>
+
+      <section class="control-section">
+        <div class="control-heading">
+          <h2 id="parentALabel">2. Parent A monthly income</h2>
+          <output id="parentAIncomeOut" class="value-badge">$22,500</output>
+        </div>
+        <div class="range-row">
+          <span>$3,000</span>
+          <input id="parentAIncome" name="parentAIncome" type="range" min="3000" max="40000" step="50" value="22500" />
+          <span>$40,000</span>
+        </div>
+        <p class="hint">Selected monthly income</p>
+      </section>
+
+      <section class="control-section">
+        <div class="control-heading">
+          <h2 id="parentBLabel">3. Parent B monthly income</h2>
+          <output id="parentBIncomeOut" class="value-badge">$12,000</output>
+        </div>
+        <div class="range-row">
+          <span>$3,000</span>
+          <input id="parentBIncome" name="parentBIncome" type="range" min="3000" max="40000" step="50" value="12000" />
+          <span>$40,000</span>
+        </div>
+        <p class="hint">Selected monthly income</p>
+      </section>
+
+      <div class="info-callout">
+        <span class="circle-icon">i</span>
         <div>
-          <h1>Georgia Child Support Calculator</h1>
-          <p>Simple 2026 planning estimate for 1 to 3 children.</p>
+          <strong>Simplified mode: low-income adjustment excluded</strong>
+          <p>Income floor set at $3,000/month to stay above the 2026 low-income adjustment range.</p>
         </div>
       </div>
-      <div class="privacy-pill" aria-label="Privacy notice">🛡️ Private • Secure • No data is stored</div>
-    </header>
 
-    <section class="top-grid" aria-label="Calculator">
-      <form id="calcForm" class="calculator-card">
-        <section class="control-section">
-          <h2>1. Number of children</h2>
-          <div class="segmented" role="group" aria-label="Number of children">
-            <label><input type="radio" name="childCount" value="1" checked><span>1 child</span></label>
-            <label><input type="radio" name="childCount" value="2"><span>2 children</span></label>
-            <label><input type="radio" name="childCount" value="3"><span>3 children</span></label>
-          </div>
-        </section>
+      <section class="control-section">
+        <div class="inline-title">
+          <h2>4. Parenting time <span>(total 365 days)</span></h2>
+          <span class="tiny-info">i</span>
+        </div>
+        <div class="split-slider-wrap">
+          <input id="parentADays" name="parentADays" class="split-slider" type="range" min="0" max="365" step="1" value="176" />
+        </div>
+        <div class="days-row">
+          <strong id="parentADaysOut">Parent A: 176 days</strong>
+          <strong id="parentBDaysOut">Parent B: 189 days</strong>
+        </div>
+        <p class="hint">Adjust the slider to represent the total number of days with each parent.</p>
+      </section>
 
-        <section class="control-section">
-          <div class="control-heading">
-            <h2>2. Parent A monthly income</h2>
-            <output id="parentAIncomeOut" class="value-badge">$22,500</output>
-          </div>
-          <div class="range-row">
-            <span>$3,000</span>
-            <input id="parentAIncome" name="parentAIncome" type="range" min="3000" max="40000" step="50" value="22500" />
-            <span>$40,000</span>
-          </div>
-          <p class="hint">Selected monthly income</p>
-        </section>
+      <section class="control-section">
+        <div class="inline-title">
+          <h2>5. Child-related health insurance premium per month</h2>
+          <span class="tiny-info">i</span>
+        </div>
+        <label class="money-input">
+          <span>$</span>
+          <input id="healthPremium" name="healthPremium" type="number" min="0" step="1" value="150" inputmode="decimal" />
+        </label>
 
-        <section class="control-section">
-          <div class="control-heading">
-            <h2>3. Parent B monthly income</h2>
-            <output id="parentBIncomeOut" class="value-badge">$12,000</output>
-          </div>
-          <div class="range-row">
-            <span>$3,000</span>
-            <input id="parentBIncome" name="parentBIncome" type="range" min="3000" max="40000" step="50" value="12000" />
-            <span>$40,000</span>
-          </div>
-          <p class="hint">Selected monthly income</p>
-        </section>
-
-        <div class="info-callout">
-          <span class="circle-icon">i</span>
-          <div>
-            <strong>Simplified mode: low-income adjustment excluded</strong>
-            <p>Income floor set at $3,000/month to stay above the 2026 low-income adjustment range.</p>
+        <div class="payer-row">
+          <strong>Paid by:</strong>
+          <div class="segmented small" role="group" aria-label="Health insurance payer">
+            <label><input type="radio" name="healthPayer" value="A" checked><span>Parent A</span></label>
+            <label><input type="radio" name="healthPayer" value="B"><span>Parent B</span></label>
           </div>
         </div>
 
-        <section class="control-section">
-          <div class="inline-title">
-            <h2>4. Parenting time <span>(total 365 days)</span></h2>
-            <button class="tiny-info" type="button" aria-label="Parenting time information">i</button>
-          </div>
-          <div class="split-slider-wrap">
-            <input id="parentADays" name="parentADays" class="split-slider" type="range" min="0" max="365" step="1" value="235" />
-          </div>
-          <div class="days-row">
-            <strong id="parentADaysOut">Parent A: 235 days</strong>
-            <strong id="parentBDaysOut">Parent B: 130 days</strong>
-          </div>
-          <p class="hint">Adjust the slider to represent the total number of days with each parent.</p>
-        </section>
+        <p id="healthPayerHint" class="hint">Simplified assumption: Parent A pays this child-related premium.</p>
+      </section>
 
-        <section class="control-section">
-          <div class="inline-title">
-            <h2>5. Child-related health insurance premium per month</h2>
-            <button class="tiny-info" type="button" aria-label="Health premium information">i</button>
-          </div>
-          <label class="money-input">
-            <span>$</span>
-            <input id="healthPremium" name="healthPremium" type="number" min="0" step="1" value="150" inputmode="decimal" />
-          </label>
-          <p class="hint">Simplified assumption: Parent A pays this child-related premium.</p>
-        </section>
+      <div class="actions">
+        <button class="primary-btn" type="submit">▦ Calculate Estimate</button>
+        <button class="secondary-btn" id="resetBtn" type="button">↻ Reset</button>
+      </div>
+    </form>
 
-        <div class="actions">
-          <button class="primary-btn" type="submit">▦ Calculate Estimate</button>
-          <button class="secondary-btn" id="resetBtn" type="button">↻ Reset</button>
-        </div>
-      </form>
+    <aside id="summary" class="summary-card" aria-live="polite"></aside>
+  </section>
 
-      <aside id="summary" class="summary-card" aria-live="polite"></aside>
-    </section>
+  <section id="details" class="details-grid" aria-label="Calculation details"></section>
 
-    <section id="details" class="details-grid" aria-label="Calculation details"></section>
+  <footer class="footer-note">🔒 Your information is not stored or shared. Planning estimate only, not legal advice.</footer>
+</main>
 
-    <footer class="footer-note">🔒 Your information is not stored or shared. Planning estimate only, not legal advice.</footer>
-  </main>
-
-  <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
