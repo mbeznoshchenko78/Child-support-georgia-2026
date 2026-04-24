@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Georgia Child Support Calculator</title>
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css?v=20260424-csws-fix-v1" />
 </head>
 <body>
 <main class="page-shell">
@@ -33,7 +33,7 @@
       <section class="control-section">
         <div class="control-heading">
           <h2 id="parentALabel">2. Parent A monthly income</h2>
-          <output id="parentAIncomeOut" class="value-badge">$22,500</output>
+          <label class="value-badge-input"><span>$</span><input id="parentAIncomeExact" type="number" min="3000" max="40000" step="0.01" value="22500" /></label>
         </div>
         <div class="range-row">
           <span>$3,000</span>
@@ -46,7 +46,7 @@
       <section class="control-section">
         <div class="control-heading">
           <h2 id="parentBLabel">3. Parent B monthly income</h2>
-          <output id="parentBIncomeOut" class="value-badge">$12,000</output>
+          <label class="value-badge-input"><span>$</span><input id="parentBIncomeExact" type="number" min="3000" max="40000" step="0.01" value="12000" /></label>
         </div>
         <div class="range-row">
           <span>$3,000</span>
@@ -114,6 +114,6 @@
   <footer class="footer-note">🔒 Your information is not stored or shared. Planning estimate only, not legal advice.</footer>
 </main>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="app.js?v=20260424-csws-fix-v1"></script>
 </body>
 </html>
