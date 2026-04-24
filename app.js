@@ -1,286 +1,377 @@
-import { computeAdjustedIncome } from './src/calc/adjustedIncome.js';
-import { lookupBcso } from './src/calc/lookupBcso.js';
-import { applyParentingTimeAdjustment } from './src/calc/parentingTimeAdjustment.js';
-import { normalizeHealthExpense, computeAdditionalExpenseFlow } from './src/calc/additionalExpenses.js';
-import { applyDeviations } from './src/calc/deviations.js';
-import { applyLowIncomeAdjustment } from './src/calc/lowIncomeAdjustment.js';
-import { determinePayer } from './src/calc/payerDetermination.js';
-import { validateModel } from './src/calc/validate.js';
-import { roundCurrency } from './src/calc/rounding.js';
-import { readModel } from './src/ui/formBindings.js';
-import { renderResults } from './src/ui/renderResults.js';
-import { initTooltips } from './src/ui/tooltips.js';
-import { getScenarios, saveScenario, deleteScenario } from './src/ui/storage.js';
-import { buildSummaryText } from './src/ui/summaryCopy.js';
+const MONEY = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const MONEY2 = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const PCT = new Intl.NumberFormat("en-US", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const form = document.getElementById('calcForm');
-const errors = document.getElementById('errors');
-const resultsEl = document.getElementById('results');
-const scenarioSelect = document.getElementById('scenarioSelect');
+const INCOME_MIN = 3000;
+const INCOME_MAX = 40000;
 
-let bcsoTable = [];
-let lowIncomeTable = [];
+// Compact 2026 Georgia BCSO checkpoints for a simplified planning estimate.
+// Exact lookups shown in the statute are every $50; this prototype interpolates
+// between selected official checkpoints and rounds to the nearest dollar.
+const BCSO_POINTS = [
+  { income: 3000, c1: 562, c2: 857, c3: 1036 },
+  { income: 4000, c1: 733, c2: 1116, c3: 1349 },
+  { income: 5000, c1: 887, c2: 1341, c3: 1610 },
+  { income: 6000, c1: 1009, c2: 1523, c3: 1826 },
+  { income: 7000, c1: 1078, c2: 1620, c3: 1932 },
+  { income: 8000, c1: 1150, c2: 1723, c3: 2050 },
+  { income: 10000, c1: 1285, c2: 1906, c3: 2242 },
+  { income: 20000, c1: 2052, c2: 3024, c3: 3539 },
+  { income: 30000, c1: 2631, c2: 3891, c3: 4565 },
+  { income: 34500, c1: 2897, c2: 4271, c3: 4996 },
+  { income: 40000, c1: 3222, c2: 4736, c3: 5522 }
+];
 
-const formFieldMap = {
-  childCount: 'childCount',
-  courtOrderedParentingTime: 'courtOrderedParentingTime',
-  splitParentingCase: 'splitParentingCase',
-  courtDesignatedNcpOverride: 'courtDesignatedNcpOverride',
-  cpGrossMonthly: 'cpGrossMonthly',
-  ncpGrossMonthly: 'ncpGrossMonthly',
-  cpSelfEmploymentTaxAdj: 'cpSelfEmploymentTaxAdj',
-  ncpSelfEmploymentTaxAdj: 'ncpSelfEmploymentTaxAdj',
-  cpPreexistingOrdersAdj: 'cpPreexistingOrdersAdj',
-  ncpPreexistingOrdersAdj: 'ncpPreexistingOrdersAdj',
-  cpQualifiedChildrenAdj: 'cpQualifiedChildrenAdj',
-  ncpQualifiedChildrenAdj: 'ncpQualifiedChildrenAdj',
-  parentingMode: 'parentingMode',
-  ncpDaysAverage: 'ncpDaysAverage',
-  child1NcpDays: 'child1NcpDays',
-  child2NcpDays: 'child2NcpDays',
-  healthAmount: 'healthAmount',
-  healthPayer: 'healthPayer',
-  healthAttributionMode: 'healthAttributionMode',
-  familyPlanTotalCoveredPersons: 'familyPlanTotalCoveredPersons',
-  familyPlanChildrenInCaseCovered: 'familyPlanChildrenInCaseCovered',
-  childCareAmount: 'childCareAmount',
-  childCarePayer: 'childCarePayer',
-  dentalEnabled: 'dentalEnabled',
-  dentalAmount: 'dentalAmount',
-  dentalPayer: 'dentalPayer',
-  visionEnabled: 'visionEnabled',
-  visionAmount: 'visionAmount',
-  visionPayer: 'visionPayer',
-  highIncomeMode: 'highIncomeMode',
-  manualUpwardDeviation: 'manualUpwardDeviation',
-  debugMode: 'debugMode'
+const DEFAULTS = {
+  childCount: 1,
+  parentAIncome: 22500,
+  parentBIncome: 12000,
+  parentADays: 235,
+  healthPremium: 150
 };
 
-async function loadData() {
-  [bcsoTable, lowIncomeTable] = await Promise.all([
-    fetch('./data/ga_bcso_table_2026.json').then((r) => r.json()),
-    fetch('./data/ga_low_income_table_2026.json').then((r) => r.json())
-  ]);
+const form = document.getElementById("calcForm");
+const summary = document.getElementById("summary");
+const details = document.getElementById("details");
+const parentAIncome = document.getElementById("parentAIncome");
+const parentBIncome = document.getElementById("parentBIncome");
+const parentADays = document.getElementById("parentADays");
+const healthPremium = document.getElementById("healthPremium");
+
+function money(value) {
+  return MONEY.format(Math.round(Number(value) || 0));
 }
 
-function refreshScenarioList() {
-  const scenarios = getScenarios();
-  scenarioSelect.innerHTML = '<option value="">Saved scenarios</option>';
-  Object.keys(scenarios).forEach((name) => {
-    const o = document.createElement('option');
-    o.value = name;
-    o.textContent = name;
-    scenarioSelect.appendChild(o);
-  });
+function money2(value) {
+  return MONEY2.format(Number(value) || 0);
 }
 
-function calculate(model) {
-  const validation = validateModel(model);
-  if (!validation.valid) return { errors: validation.errors };
+function pct(value) {
+  return PCT.format(Number(value) || 0);
+}
 
-  const cpAdjusted = computeAdjustedIncome(model.incomes.cpGrossMonthly, {
-    selfEmploymentTax: model.scheduleB.cpSelfEmploymentTaxAdj,
-    preexistingOrders: model.scheduleB.cpPreexistingOrdersAdj,
-    qualifiedChildren: model.scheduleB.cpQualifiedChildrenAdj
-  });
-  const ncpAdjusted = computeAdjustedIncome(model.incomes.ncpGrossMonthly, {
-    selfEmploymentTax: model.scheduleB.ncpSelfEmploymentTaxAdj,
-    preexistingOrders: model.scheduleB.ncpPreexistingOrdersAdj,
-    qualifiedChildren: model.scheduleB.ncpQualifiedChildrenAdj
-  });
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, Number(value) || 0));
+}
 
-  const combinedAdjusted = roundCurrency(cpAdjusted + ncpAdjusted);
-  const bcso = lookupBcso(combinedAdjusted, model.childCount, bcsoTable);
+function round2(value) {
+  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+}
 
-  const cpPct = cpAdjusted / (combinedAdjusted || 1);
-  const ncpPct = ncpAdjusted / (combinedAdjusted || 1);
-  const cpBasicShare = roundCurrency(bcso.bcsoAmount * cpPct);
-  const ncpBasicShare = roundCurrency(bcso.bcsoAmount * ncpPct);
+function readInputs() {
+  const childCount = Number(new FormData(form).get("childCount") || 1);
+  return {
+    childCount,
+    parentAIncome: clamp(parentAIncome.value, INCOME_MIN, INCOME_MAX),
+    parentBIncome: clamp(parentBIncome.value, INCOME_MIN, INCOME_MAX),
+    parentADays: clamp(parentADays.value, 0, 365),
+    healthPremium: Math.max(0, Number(healthPremium.value) || 0)
+  };
+}
 
-  const ncpDays = model.caseSetup.courtOrderedParentingTime ? validation.ncpDays : 0;
-  const cpDays = 365 - ncpDays;
+function lookupBcso(combinedIncome, childCount) {
+  const column = `c${childCount}`;
+  const income = clamp(combinedIncome, BCSO_POINTS[0].income, BCSO_POINTS[BCSO_POINTS.length - 1].income);
 
-  const scheduleC = applyParentingTimeAdjustment({
-    useScheduleC: model.caseSetup.courtOrderedParentingTime,
-    ncpDays,
-    cpDays,
-    cpBasicShare,
-    ncpBasicShare,
-    bcsoAmount: bcso.bcsoAmount
-  });
+  let low = BCSO_POINTS[0];
+  let high = BCSO_POINTS[BCSO_POINTS.length - 1];
 
-  const healthAmount = normalizeHealthExpense(model.additionalExpenses.health, model.childCount);
-  const childCareAmount = roundCurrency(model.additionalExpenses.workRelatedChildCare.amount);
+  for (let i = 0; i < BCSO_POINTS.length - 1; i++) {
+    if (income >= BCSO_POINTS[i].income && income <= BCSO_POINTS[i + 1].income) {
+      low = BCSO_POINTS[i];
+      high = BCSO_POINTS[i + 1];
+      break;
+    }
+  }
 
-  const additional = computeAdditionalExpenseFlow({
-    cpSharePct: cpPct,
-    ncpSharePct: ncpPct,
-    healthAmount,
-    healthPayer: model.additionalExpenses.health.payer,
-    childCareAmount,
-    childCarePayer: model.additionalExpenses.workRelatedChildCare.payer,
-    cpPresumptiveSubtotal: roundCurrency(scheduleC.cpAdjustedBasic + roundCurrency((healthAmount + childCareAmount) * cpPct)),
-    ncpPresumptiveSubtotal: roundCurrency(scheduleC.ncpAdjustedBasic + roundCurrency((healthAmount + childCareAmount) * ncpPct))
-  });
+  if (low.income === high.income) {
+    return { amount: low[column], lookupIncome: low.income, method: "checkpoint" };
+  }
 
-  const preDeviationNcpTransfer = additional.ncpAfterCredits;
-  const highIncomeEnabled = combinedAdjusted > 40000;
-  const deviations = applyDeviations(preDeviationNcpTransfer, model.deviations, highIncomeEnabled);
-
-  const lowIncome = applyLowIncomeAdjustment({
-    childCount: model.childCount,
-    ncpAdjustedGross: ncpAdjusted,
-    ncpTransferAmount: deviations.postDeviationNcpTransfer,
-    lowIncomeTable
-  });
-
-  const final = determinePayer(lowIncome.after);
+  const ratio = (income - low.income) / (high.income - low.income);
+  const amount = low[column] + ratio * (high[column] - low[column]);
 
   return {
-    model,
-    adjusted: {
-      cpGross: model.incomes.cpGrossMonthly,
-      ncpGross: model.incomes.ncpGrossMonthly,
-      cpAdjusted,
-      ncpAdjusted,
-      combinedAdjusted
-    },
+    amount: Math.round(amount),
+    lookupIncome: Math.round(income / 50) * 50,
+    method: "interpolated"
+  };
+}
+
+function determineRoles(input) {
+  const aDays = input.parentADays;
+  const bDays = 365 - aDays;
+
+  if (aDays > bDays) return { cp: "A", ncp: "B", cpDays: aDays, ncpDays: bDays };
+  if (bDays > aDays) return { cp: "B", ncp: "A", cpDays: bDays, ncpDays: aDays };
+
+  // At equal parenting time, Georgia designates the higher-earning parent as NCP
+  // for calculation purposes. This is still a simplified UI label.
+  if (input.parentAIncome >= input.parentBIncome) {
+    return { cp: "B", ncp: "A", cpDays: bDays, ncpDays: aDays };
+  }
+  return { cp: "A", ncp: "B", cpDays: aDays, ncpDays: bDays };
+}
+
+function getIncome(input, parent) {
+  return parent === "A" ? input.parentAIncome : input.parentBIncome;
+}
+
+function applyParentingTimeAdjustment({ cpShare, ncpShare, cpDays, ncpDays, bcso }) {
+  const A = Math.pow(ncpDays, 2.5);
+  const B = Math.pow(cpDays, 2.5);
+  const C = A * cpShare;
+  const D = B * ncpShare;
+  const E = C - D;
+  const F = (A + B) === 0 ? 0 : E / (A + B);
+  const ncpAdjustedBasic = ncpShare + F;
+  const cpAdjustedBasic = bcso - ncpAdjustedBasic;
+  return { A, B, C, D, E, F, ncpAdjustedBasic, cpAdjustedBasic };
+}
+
+function calculate(input) {
+  const combined = input.parentAIncome + input.parentBIncome;
+  const parentAPct = input.parentAIncome / combined;
+  const parentBPct = input.parentBIncome / combined;
+  const bcso = lookupBcso(combined, input.childCount);
+  const roles = determineRoles(input);
+  const cpIncome = getIncome(input, roles.cp);
+  const ncpIncome = getIncome(input, roles.ncp);
+  const cpPct = cpIncome / combined;
+  const ncpPct = ncpIncome / combined;
+  const cpBasicShare = bcso.amount * cpPct;
+  const ncpBasicShare = bcso.amount * ncpPct;
+
+  const parenting = applyParentingTimeAdjustment({
+    cpShare: cpBasicShare,
+    ncpShare: ncpBasicShare,
+    cpDays: roles.cpDays,
+    ncpDays: roles.ncpDays,
+    bcso: bcso.amount
+  });
+
+  const healthSplitA = input.healthPremium * parentAPct;
+  const healthSplitB = input.healthPremium * parentBPct;
+  const healthSplitNcp = roles.ncp === "A" ? healthSplitA : healthSplitB;
+
+  // Simplified assumption in this prototype: Parent A carries/pays the child-related premium.
+  const healthCreditToNcp = roles.ncp === "A" ? input.healthPremium : 0;
+
+  const preCreditTransfer = parenting.ncpAdjustedBasic + healthSplitNcp;
+  const finalTransfer = preCreditTransfer - healthCreditToNcp;
+  const payer = finalTransfer >= 0 ? roles.ncp : roles.cp;
+  const recipient = finalTransfer >= 0 ? roles.cp : roles.ncp;
+  const finalAmount = Math.abs(finalTransfer);
+
+  return {
+    input,
+    combined,
+    parentAPct,
+    parentBPct,
     bcso,
-    proRata: { cpPct, ncpPct, cpBasicShare, ncpBasicShare },
-    parenting: { ncpDays, cpDays, scheduleC },
-    additional,
-    deviations,
-    lowIncome,
-    final,
-    healthNormalizedAmount: healthAmount,
-    uninsuredHealthPercentages: { cpPct: roundCurrency(cpPct * 100), ncpPct: roundCurrency(ncpPct * 100) }
+    roles,
+    cpIncome,
+    ncpIncome,
+    cpPct,
+    ncpPct,
+    cpBasicShare,
+    ncpBasicShare,
+    parenting,
+    healthSplitA,
+    healthSplitB,
+    healthSplitNcp,
+    healthCreditToNcp,
+    preCreditTransfer,
+    finalTransfer,
+    payer,
+    recipient,
+    finalAmount
   };
 }
 
-function render(model) {
-  const result = calculate(model);
-  if (result.errors) {
-    errors.innerHTML = result.errors.map((e) => `<li>${e}</li>`).join('');
-    resultsEl.innerHTML = '';
-    return;
-  }
-  errors.innerHTML = '';
-  renderResults(resultsEl, result);
-  window.latestResult = result;
+function updateRangeFills(input) {
+  const aPct = ((input.parentAIncome - INCOME_MIN) / (INCOME_MAX - INCOME_MIN)) * 100;
+  const bPct = ((input.parentBIncome - INCOME_MIN) / (INCOME_MAX - INCOME_MIN)) * 100;
+  const daysPct = (input.parentADays / 365) * 100;
+
+  parentAIncome.style.background = `linear-gradient(90deg, var(--blue) 0 ${aPct}%, #dbe5f2 ${aPct}% 100%)`;
+  parentBIncome.style.background = `linear-gradient(90deg, var(--blue) 0 ${bPct}%, #dbe5f2 ${bPct}% 100%)`;
+  parentADays.style.setProperty("--split", `${daysPct}%`);
+
+  document.getElementById("parentAIncomeOut").textContent = money(input.parentAIncome);
+  document.getElementById("parentBIncomeOut").textContent = money(input.parentBIncome);
+  document.getElementById("parentADaysOut").textContent = `Parent A: ${input.parentADays} days`;
+  document.getElementById("parentBDaysOut").textContent = `Parent B: ${365 - input.parentADays} days`;
 }
 
-function setFieldValue(fieldName, value) {
-  const field = form.elements[fieldName];
-  if (!field) return;
-  if (field.type === 'checkbox') {
-    field.checked = Boolean(value);
-  } else {
-    field.value = value ?? '';
-  }
+function renderSummary(result) {
+  const { input } = result;
+  const parentBDays = 365 - input.parentADays;
+  const payerName = `Parent ${result.payer}`;
+  const recipientName = `Parent ${result.recipient}`;
+
+  summary.innerHTML = `
+    <div class="summary-top">
+      <div class="care-icon" aria-hidden="true">♡</div>
+      <h2>Estimated monthly child support</h2>
+      <div class="big-amount">${money(result.finalAmount)}</div>
+      <div class="per-month">per month</div>
+      <div class="summary-badge"><span class="circle-icon">i</span> Simplified estimate: low-income adjustment not included</div>
+    </div>
+
+    <div class="summary-list">
+      <h3>Estimate summary</h3>
+      ${summaryRow("👥", "Number of children", `${input.childCount} ${input.childCount === 1 ? "child" : "children"}`)}
+      ${summaryRow("A", "Parent A monthly income", money(input.parentAIncome), "blue")}
+      ${summaryRow("B", "Parent B monthly income", money(input.parentBIncome), "teal")}
+      ${summaryRow("📅", "Parenting time (days per year)", `<span class="summary-value"><span style="color:var(--blue)">Parent A: ${input.parentADays} days</span> • <span style="color:var(--teal)">Parent B: ${parentBDays} days</span></span>`, "purple")}
+      ${summaryRow("🛡", "Health insurance premium", money(input.healthPremium))}
+      ${summaryRow("↔", "Estimated transfer", `${payerName} pays ${recipientName}`)}
+    </div>
+
+    <div class="summary-note">ⓘ Planning estimate only. Not legal advice.</div>
+  `;
 }
 
-function fillForm(model) {
-  const values = {
-    [formFieldMap.childCount]: model.childCount,
-    [formFieldMap.courtOrderedParentingTime]: model.caseSetup.courtOrderedParentingTime ? 'yes' : 'no',
-    [formFieldMap.splitParentingCase]: model.caseSetup.splitParentingCase,
-    [formFieldMap.courtDesignatedNcpOverride]: model.caseSetup.courtDesignatedNcpOverride,
-    [formFieldMap.cpGrossMonthly]: model.incomes.cpGrossMonthly,
-    [formFieldMap.ncpGrossMonthly]: model.incomes.ncpGrossMonthly,
-    [formFieldMap.cpSelfEmploymentTaxAdj]: model.scheduleB.cpSelfEmploymentTaxAdj,
-    [formFieldMap.ncpSelfEmploymentTaxAdj]: model.scheduleB.ncpSelfEmploymentTaxAdj,
-    [formFieldMap.cpPreexistingOrdersAdj]: model.scheduleB.cpPreexistingOrdersAdj,
-    [formFieldMap.ncpPreexistingOrdersAdj]: model.scheduleB.ncpPreexistingOrdersAdj,
-    [formFieldMap.cpQualifiedChildrenAdj]: model.scheduleB.cpQualifiedChildrenAdj,
-    [formFieldMap.ncpQualifiedChildrenAdj]: model.scheduleB.ncpQualifiedChildrenAdj,
-    [formFieldMap.parentingMode]: model.parentingTime.mode,
-    [formFieldMap.ncpDaysAverage]: model.parentingTime.ncpDaysAverage,
-    [formFieldMap.child1NcpDays]: model.parentingTime.child1NcpDays,
-    [formFieldMap.child2NcpDays]: model.parentingTime.child2NcpDays,
-    [formFieldMap.healthAmount]: model.additionalExpenses.health.amount,
-    [formFieldMap.healthPayer]: model.additionalExpenses.health.payer,
-    [formFieldMap.healthAttributionMode]: model.additionalExpenses.health.attributionMode,
-    [formFieldMap.familyPlanTotalCoveredPersons]: model.additionalExpenses.health.familyPlanTotalCoveredPersons,
-    [formFieldMap.familyPlanChildrenInCaseCovered]: model.additionalExpenses.health.familyPlanChildrenInCaseCovered,
-    [formFieldMap.childCareAmount]: model.additionalExpenses.workRelatedChildCare.amount,
-    [formFieldMap.childCarePayer]: model.additionalExpenses.workRelatedChildCare.payer,
-    [formFieldMap.dentalEnabled]: model.deviations.dental.enabled,
-    [formFieldMap.dentalAmount]: model.deviations.dental.amount,
-    [formFieldMap.dentalPayer]: model.deviations.dental.payer,
-    [formFieldMap.visionEnabled]: model.deviations.vision.enabled,
-    [formFieldMap.visionAmount]: model.deviations.vision.amount,
-    [formFieldMap.visionPayer]: model.deviations.vision.payer,
-    [formFieldMap.highIncomeMode]: model.deviations.highIncome.mode,
-    [formFieldMap.manualUpwardDeviation]: model.deviations.highIncome.manualUpwardDeviation,
-    [formFieldMap.debugMode]: model.options.debugMode
-  };
-
-  Object.entries(values).forEach(([fieldName, fieldValue]) => setFieldValue(fieldName, fieldValue));
-  updateConditionalUI();
+function summaryRow(icon, label, value, tone = "") {
+  const isHtml = String(value).includes("<");
+  return `
+    <div class="summary-row">
+      <div class="row-icon ${tone}">${icon}</div>
+      <div class="summary-label">${label}</div>
+      <div class="summary-value">${isHtml ? value : String(value)}</div>
+    </div>
+  `;
 }
 
-function updateConditionalUI() {
-  const model = readModel(form);
-  const combinedAdjusted =
-    computeAdjustedIncome(model.incomes.cpGrossMonthly, {
-      selfEmploymentTax: model.scheduleB.cpSelfEmploymentTaxAdj,
-      preexistingOrders: model.scheduleB.cpPreexistingOrdersAdj,
-      qualifiedChildren: model.scheduleB.cpQualifiedChildrenAdj
-    }) +
-    computeAdjustedIncome(model.incomes.ncpGrossMonthly, {
-      selfEmploymentTax: model.scheduleB.ncpSelfEmploymentTaxAdj,
-      preexistingOrders: model.scheduleB.ncpPreexistingOrdersAdj,
-      qualifiedChildren: model.scheduleB.ncpQualifiedChildrenAdj
-    });
+function renderDetails(result) {
+  const { input } = result;
+  const bDays = 365 - input.parentADays;
+  const oneChild = input.childCount === 1 ? "child" : "children";
+  const healthPremium = input.healthPremium;
+  const ncpDebug = result.roles.ncp === "A" ? input.parentADays : bDays;
+  const cpDebug = result.roles.cp === "A" ? input.parentADays : bDays;
 
-  document.getElementById('familyPlanFields').hidden = model.additionalExpenses.health.attributionMode !== 'prorated_family_plan';
-  document.getElementById('highIncomeControls').hidden = combinedAdjusted <= 40000;
+  details.innerHTML = `
+    <article class="detail-card inputs">
+      ${title("📄", "1. Inputs used")}
+      <ul>
+        <li><strong>Number of children:</strong> ${input.childCount} ${oneChild}</li>
+        <li><strong>Parent A monthly income:</strong> ${money(input.parentAIncome)}</li>
+        <li><strong>Parent B monthly income:</strong> ${money(input.parentBIncome)}</li>
+        <li><strong>Parenting time:</strong> A ${input.parentADays} days, B ${bDays} days</li>
+        <li><strong>Child-related health insurance premium:</strong> ${money(healthPremium)}</li>
+      </ul>
+    </article>
 
-  if (Number(model.childCount) === 1) {
-    form.elements.child2NcpDays.value = '';
-  }
+    <article class="detail-card assumptions">
+      ${title("⚖️", "2. Simplifying assumptions", "teal")}
+      <ul>
+        <li>Supports 1 to 3 children in this prototype.</li>
+        <li>Each parent's monthly income is limited to ${money(INCOME_MIN)} to ${money(INCOME_MAX)}.</li>
+        <li>Income floor is intentionally set to avoid the 2026 low-income adjustment.</li>
+        <li>Parenting time is represented with one slider totaling 365 days.</li>
+        <li>Only the child-related portion of health insurance is included.</li>
+        <li>No self-employment adjustment, preexisting support order adjustment, qualified-children adjustment, work-related child care, or discretionary deviations are included.</li>
+      </ul>
+    </article>
+
+    <article class="detail-card steps">
+      ${title("▦", "3. Main calculation steps", "purple")}
+      <ol class="numbered">
+        <li>Combine both parents' monthly incomes.</li>
+        <li>Determine each parent's pro rata share of combined income.</li>
+        <li>Reference the Georgia basic child-support schedule using combined income and number of children.</li>
+        <li>Apply the parenting-time adjustment.</li>
+        <li>Add the child-related health insurance premium as an additional expense.</li>
+        <li>Split that premium pro rata by income.</li>
+        <li>Credit the premium to the parent who actually pays it.</li>
+        <li>Estimate which parent pays and the resulting monthly amount.</li>
+      </ol>
+    </article>
+
+    <article class="detail-card health">
+      ${title("🛡️", "4. Health insurance treatment", "teal")}
+      <p>The child-related monthly health insurance premium is treated as an additional expense.</p>
+      <ul>
+        <li>It is split pro rata based on each parent's share of combined income.</li>
+        <li>Each parent's share is included in the calculation.</li>
+        <li>This prototype assumes Parent A pays the premium, so the premium is credited against Parent A's support side of the worksheet.</li>
+      </ul>
+      <div class="health-example">
+        <h4>Example with these inputs</h4>
+        <div class="health-grid">
+          <div><span>Parent A share (${pct(result.parentAPct)})</span><strong>${money2(result.healthSplitA)}</strong></div>
+          <div><span>Parent B share (${pct(result.parentBPct)})</span><strong>${money2(result.healthSplitB)}</strong></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="detail-card nerds">
+      ${title("⌘", "5. Calculation steps for nerds 🤓", "purple")}
+      <div class="code-panel" role="textbox" aria-label="Technical calculation details">
+<span class="green">• Combined income</span>          = ${money(input.parentAIncome)} + ${money(input.parentBIncome)} = <span class="green">${money(result.combined)}</span>
+<span class="pink">• Parent A pro rata share</span>  = ${input.parentAIncome.toLocaleString()} / ${result.combined.toLocaleString()} = <span class="green">${pct(result.parentAPct)}</span>
+<span class="pink">• Parent B pro rata share</span>  = ${input.parentBIncome.toLocaleString()} / ${result.combined.toLocaleString()} = <span class="green">${pct(result.parentBPct)}</span>
+<span class="blue">• BCSO lookup estimate</span>     = ${money(result.bcso.amount)} for ${input.childCount} ${oneChild}
+<span class="blue">• Role mapping</span>             = CP Parent ${result.roles.cp}, NCP Parent ${result.roles.ncp}
+<span class="blue">• Health premium split</span>
+    - Parent A = <span class="green">${money2(result.healthSplitA)}</span> (${pct(result.parentAPct)})
+    - Parent B = <span class="green">${money2(result.healthSplitB)}</span> (${pct(result.parentBPct)})
+<span class="yellow">• Parenting-time inputs</span>    = n_NCP ${ncpDebug} days, n_CP ${cpDebug} days
+<span class="yellow">• Intermediate debug value A</span> = ${ncpDebug}<sup>2.5</sup> ≈ <span class="green">${Math.round(result.parenting.A).toLocaleString()}</span>
+<span class="yellow">• Intermediate debug value B</span> = ${cpDebug}<sup>2.5</sup> ≈ <span class="green">${Math.round(result.parenting.B).toLocaleString()}</span>
+
+<span class="pink">Yes, these giant numbers are weird intermediate values used by the math engine. 🚀</span>
+
+<span class="green">• Final estimated monthly child support</span> = ${money(result.finalAmount)}
+  <span class="muted">(paid by Parent ${result.payer} to Parent ${result.recipient})</span>
+      </div>
+    </article>
+
+    <article class="detail-card sources">
+      ${title("🏛️", "6. Relevant authoritative sources")}
+      <div class="source-list">
+        ${source("Georgia Courts Child Support Calculator", "georgiacourts.gov/child-support-calculator", "https://georgiacourts.gov/child-support-calculator/")}
+        ${source("Georgia Child Support Commission", "csc.georgiacourts.gov", "https://csc.georgiacourts.gov/")}
+        ${source("Georgia Child Support Commission FAQs", "csc.georgiacourts.gov/faqs", "https://csc.georgiacourts.gov/faqs/")}
+        ${source("O.C.G.A. § 19-6-15", "Georgia child support guidelines statute", "https://csconlinecalc.georgiacourts.gov/media/childsupportstatute.pdf")}
+      </div>
+    </article>
+  `;
 }
 
-await loadData();
-initTooltips();
-refreshScenarioList();
-updateConditionalUI();
-render(readModel(form));
+function title(icon, text, tone = "") {
+  return `<div class="card-title"><div class="icon-bubble ${tone}">${icon}</div><h3>${text}</h3></div>`;
+}
 
-form.addEventListener('input', () => {
-  updateConditionalUI();
-  render(readModel(form));
+function source(titleText, urlText, href) {
+  return `<a class="source-card" href="${href}" target="_blank" rel="noopener noreferrer"><strong>${titleText}</strong><span>${urlText} ↗</span></a>`;
+}
+
+function update() {
+  const input = readInputs();
+  updateRangeFills(input);
+  const result = calculate(input);
+  renderSummary(result);
+  renderDetails(result);
+}
+
+form.addEventListener("input", update);
+form.addEventListener("change", update);
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  update();
+  document.getElementById("summary").scrollIntoView({ behavior: "smooth", block: "nearest" });
 });
-
-document.getElementById('saveScenarioBtn').addEventListener('click', () => {
-  const name = prompt('Scenario name?');
-  if (!name) return;
-  saveScenario(name, readModel(form));
-  refreshScenarioList();
-});
-
-document.getElementById('loadScenarioBtn').addEventListener('click', () => {
-  const scenarios = getScenarios();
-  const selected = scenarioSelect.value;
-  if (!selected || !scenarios[selected]) return;
-  fillForm(scenarios[selected]);
-  render(readModel(form));
-});
-
-document.getElementById('deleteScenarioBtn').addEventListener('click', () => {
-  if (!scenarioSelect.value) return;
-  deleteScenario(scenarioSelect.value);
-  refreshScenarioList();
-});
-
-document.getElementById('resetDefaultsBtn').addEventListener('click', () => {
+document.getElementById("resetBtn").addEventListener("click", () => {
   form.reset();
-  updateConditionalUI();
-  render(readModel(form));
+  parentAIncome.value = DEFAULTS.parentAIncome;
+  parentBIncome.value = DEFAULTS.parentBIncome;
+  parentADays.value = DEFAULTS.parentADays;
+  healthPremium.value = DEFAULTS.healthPremium;
+  form.querySelector(`input[name="childCount"][value="${DEFAULTS.childCount}"]`).checked = true;
+  update();
 });
 
-document.getElementById('copySummaryBtn').addEventListener('click', async () => {
-  if (!window.latestResult) return;
-  await navigator.clipboard.writeText(buildSummaryText(window.latestResult));
-  alert('Summary copied');
-});
+update();

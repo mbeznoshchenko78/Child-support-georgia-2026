@@ -3,121 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Georgia Child Support 2026 Estimate Calculator</title>
+  <title>Georgia Child Support Calculator</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Georgia Child Support 2026 Estimate Calculator</h1>
-    <p>Planning estimate tool only — not the official worksheet and not legal advice.</p>
-  </header>
-
-  <main class="layout">
-    <form id="calcForm" class="card-stack">
-      <section class="card">
-        <h2>Case setup</h2>
-        <label>Number of children
-          <select name="childCount"><option value="1" selected>1</option><option value="2">2</option></select>
-        </label>
-        <label>Court-ordered parenting time
-          <select name="courtOrderedParentingTime"><option value="yes" selected>Yes</option><option value="no">No</option></select>
-        </label>
-        <label><input type="checkbox" name="courtDesignatedNcpOverride" /> Court designated NCP override</label>
-
-        <details>
-          <summary>Unsupported cases</summary>
-          <label><input type="checkbox" name="splitParentingCase" /> Split parenting case (unsupported)</label>
-        </details>
-      </section>
-
-      <section class="card">
-        <h2>Income and Schedule B adjustments</h2>
-        <div class="grid2">
-          <label>CP gross monthly <input type="number" step="0.01" name="cpGrossMonthly" value="15000" /></label>
-          <label>NCP gross monthly <input type="number" step="0.01" name="ncpGrossMonthly" value="25000" /></label>
+  <main class="page-shell">
+    <header class="hero">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span>⚖</span>
         </div>
-        <details>
-          <summary>Advanced but required when applicable</summary>
-          <div class="grid2">
-            <label>CP self-employment tax adjustment <input type="number" step="0.01" name="cpSelfEmploymentTaxAdj" value="0"/></label>
-            <label>NCP self-employment tax adjustment <input type="number" step="0.01" name="ncpSelfEmploymentTaxAdj" value="0"/></label>
-            <label>CP preexisting support orders <input type="number" step="0.01" name="cpPreexistingOrdersAdj" value="0"/></label>
-            <label>NCP preexisting support orders <input type="number" step="0.01" name="ncpPreexistingOrdersAdj" value="0"/></label>
-            <label>CP qualified-children adjustment <input type="number" step="0.01" name="cpQualifiedChildrenAdj" value="0"/></label>
-            <label>NCP qualified-children adjustment <input type="number" step="0.01" name="ncpQualifiedChildrenAdj" value="0"/></label>
-          </div>
-        </details>
-      </section>
+        <div>
+          <h1>Georgia Child Support Calculator</h1>
+          <p>Simple 2026 planning estimate for 1 to 3 children.</p>
+        </div>
+      </div>
+      <div class="privacy-pill" aria-label="Privacy notice">🛡️ Private • Secure • No data is stored</div>
+    </header>
 
-      <section class="card">
-        <h2>Parenting time (Schedule C)</h2>
-        <details>
-          <summary>Parenting-time inputs</summary>
-          <label>Mode
-            <select name="parentingMode"><option value="average_days" selected>Average days</option><option value="per_child_days">Per child days</option></select>
+    <section class="top-grid" aria-label="Calculator">
+      <form id="calcForm" class="calculator-card">
+        <section class="control-section">
+          <h2>1. Number of children</h2>
+          <div class="segmented" role="group" aria-label="Number of children">
+            <label><input type="radio" name="childCount" value="1" checked><span>1 child</span></label>
+            <label><input type="radio" name="childCount" value="2"><span>2 children</span></label>
+            <label><input type="radio" name="childCount" value="3"><span>3 children</span></label>
+          </div>
+        </section>
+
+        <section class="control-section">
+          <div class="control-heading">
+            <h2>2. Parent A monthly income</h2>
+            <output id="parentAIncomeOut" class="value-badge">$22,500</output>
+          </div>
+          <div class="range-row">
+            <span>$3,000</span>
+            <input id="parentAIncome" name="parentAIncome" type="range" min="3000" max="40000" step="50" value="22500" />
+            <span>$40,000</span>
+          </div>
+          <p class="hint">Selected monthly income</p>
+        </section>
+
+        <section class="control-section">
+          <div class="control-heading">
+            <h2>3. Parent B monthly income</h2>
+            <output id="parentBIncomeOut" class="value-badge">$12,000</output>
+          </div>
+          <div class="range-row">
+            <span>$3,000</span>
+            <input id="parentBIncome" name="parentBIncome" type="range" min="3000" max="40000" step="50" value="12000" />
+            <span>$40,000</span>
+          </div>
+          <p class="hint">Selected monthly income</p>
+        </section>
+
+        <div class="info-callout">
+          <span class="circle-icon">i</span>
+          <div>
+            <strong>Simplified mode: low-income adjustment excluded</strong>
+            <p>Income floor set at $3,000/month to stay above the 2026 low-income adjustment range.</p>
+          </div>
+        </div>
+
+        <section class="control-section">
+          <div class="inline-title">
+            <h2>4. Parenting time <span>(total 365 days)</span></h2>
+            <button class="tiny-info" type="button" aria-label="Parenting time information">i</button>
+          </div>
+          <div class="split-slider-wrap">
+            <input id="parentADays" name="parentADays" class="split-slider" type="range" min="0" max="365" step="1" value="235" />
+          </div>
+          <div class="days-row">
+            <strong id="parentADaysOut">Parent A: 235 days</strong>
+            <strong id="parentBDaysOut">Parent B: 130 days</strong>
+          </div>
+          <p class="hint">Adjust the slider to represent the total number of days with each parent.</p>
+        </section>
+
+        <section class="control-section">
+          <div class="inline-title">
+            <h2>5. Child-related health insurance premium per month</h2>
+            <button class="tiny-info" type="button" aria-label="Health premium information">i</button>
+          </div>
+          <label class="money-input">
+            <span>$</span>
+            <input id="healthPremium" name="healthPremium" type="number" min="0" step="1" value="150" inputmode="decimal" />
           </label>
-          <div class="grid2">
-            <label>NCP parenting days average <input type="number" step="0.1" name="ncpDaysAverage" value="80" min="0" max="182.5"/></label>
-            <label>Child 1 NCP days <input type="number" step="0.1" name="child1NcpDays" value="80" min="0" max="182.5"/></label>
-            <label>Child 2 NCP days <input type="number" step="0.1" name="child2NcpDays" value="80" min="0" max="182.5"/></label>
-          </div>
-        </details>
-      </section>
+          <p class="hint">Simplified assumption: Parent A pays this child-related premium.</p>
+        </section>
 
-      <section class="card">
-        <h2>Additional expenses</h2>
-        <label>Health insurance amount <input type="number" step="0.01" name="healthAmount" value="0"/></label>
-        <label>Health payer <select name="healthPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
-        <label>Health attribution mode <select name="healthAttributionMode"><option value="child_only_known">Child-only known</option><option value="prorated_family_plan">Prorated family plan</option></select></label>
-        <div id="familyPlanFields" class="grid2" hidden>
-          <label>Family plan covered persons <input type="number" step="1" name="familyPlanTotalCoveredPersons" value="0"/></label>
-          <label>Children in case covered <input type="number" step="1" name="familyPlanChildrenInCaseCovered" value="0"/></label>
-        </div>
-        <label>Work-related child care <input type="number" step="0.01" name="childCareAmount" value="0"/></label>
-        <label>Child care payer <select name="childCarePayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
-      </section>
-
-      <details class="card">
-        <summary>Advanced deviation and income controls</summary>
-        <h2>Deviation estimates (court-discretionary)</h2>
-        <div class="grid2">
-          <label><input type="checkbox" name="dentalEnabled"/> Include dental deviation</label>
-          <label>Dental amount <input type="number" step="0.01" name="dentalAmount" value="0"/></label>
-          <label>Dental payer <select name="dentalPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
-
-          <label><input type="checkbox" name="visionEnabled"/> Include vision deviation</label>
-          <label>Vision amount <input type="number" step="0.01" name="visionAmount" value="0"/></label>
-          <label>Vision payer <select name="visionPayer"><option value="cp">CP</option><option value="ncp">NCP</option></select></label>
-        </div>
-
-        <div id="highIncomeControls" hidden>
-          <h2>High-income handling</h2>
-          <label>Mode <select name="highIncomeMode"><option value="statutory" selected>Statutory Presumptive</option><option value="planning">Planning / What-if High-Income</option></select></label>
-          <label>Manual high-income upward deviation <input type="number" step="0.01" name="manualUpwardDeviation" value="0"/></label>
-        </div>
-      </details>
-
-      <section class="card">
-        <h2>Save / Load / Copy summary</h2>
-        <select id="scenarioSelect"></select>
         <div class="actions">
-          <button type="button" id="saveScenarioBtn">Save</button>
-          <button type="button" id="loadScenarioBtn">Load</button>
-          <button type="button" id="deleteScenarioBtn">Delete</button>
-          <button type="button" id="resetDefaultsBtn">Reset defaults</button>
-          <button type="button" id="copySummaryBtn">Copy summary</button>
+          <button class="primary-btn" type="submit">▦ Calculate Estimate</button>
+          <button class="secondary-btn" id="resetBtn" type="button">↻ Reset</button>
         </div>
-      </section>
+      </form>
 
-      <details class="card">
-        <summary>Developer options</summary>
-        <label><input type="checkbox" name="debugMode"/> Debug mode</label>
-      </details>
+      <aside id="summary" class="summary-card" aria-live="polite"></aside>
+    </section>
 
-      <ul id="errors" class="errors"></ul>
-    </form>
+    <section id="details" class="details-grid" aria-label="Calculation details"></section>
 
-    <aside id="results" class="results"></aside>
+    <footer class="footer-note">🔒 Your information is not stored or shared. Planning estimate only, not legal advice.</footer>
   </main>
 
   <script type="module" src="app.js"></script>
