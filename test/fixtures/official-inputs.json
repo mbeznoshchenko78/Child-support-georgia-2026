@@ -40,5 +40,8 @@
   {"id":"below-first-six","gross":[200,500],"children":6},
   {"id":"one-zero-positive-d","gross":[3000,0],"children":1,"flatDeviation":[0,100]},
   {"id":"near-threshold-cap-3","gross":[1800,3330],"children":3,"monthlyChildcare":[900,0]},
-  {"id":"two-recurring-dental-as-flat-judicial-amount","gross":[4700,6300],"children":2,"ncpDays":132.25,"monthlyHealth":[75,55],"flatDeviation":[0,20]}
+  {"id":"two-recurring-dental-as-flat-judicial-amount","gross":[4700,6300],"children":2,"ncpDays":132.25,"monthlyHealth":[75,55],"flatDeviation":[0,20]},
+  {"id":"fractional-extra-with-benefit","gross":[1925.77,1967.7],"children":1,"ncp":0,"ncpDays":5.25,"selfEmployment":[1224.2,1290.59],"priorSupport":[30.23,14.46],"qualified":[1,1],"monthlyHealth":[160.69,362.63],"monthlyChildcare":[379.93,251.89],"monthlyEducation":[0,0],"monthlyExtraMedical":[5.9,65.16],"monthlySpecial":[0,0],"flatDeviation":[0,0],"dependentSocialSecurity":[91.53,20.56]},
+  {"id":"fractional-extra-just-below-half","gross":[8619.78,5261.46],"children":4,"ncp":1,"ncpDays":1.625,"selfEmployment":[1823.23,2328.26],"priorSupport":[0,0],"qualified":[0,0],"monthlyHealth":[337.23,382.86],"monthlyChildcare":[25.16,102.33],"monthlyEducation":[76.98,222.83],"monthlyExtraMedical":[0,0],"monthlySpecial":[159.93,109.64],"flatDeviation":[0,0],"dependentSocialSecurity":[0,0]},
+  {"id":"fractional-extra-negative-credit","gross":[35944.57,31741.97],"children":2,"ncp":1,"ncpDays":27,"selfEmployment":[0,0],"priorSupport":[0,0],"qualified":[0,0],"monthlyHealth":[312.48,128.06],"monthlyChildcare":[175.59,139.37],"monthlyEducation":[89.46,210],"monthlyExtraMedical":[37.1,191.9],"monthlySpecial":[135.61,40.01],"flatDeviation":[0,0],"dependentSocialSecurity":[0,0]}
 ]

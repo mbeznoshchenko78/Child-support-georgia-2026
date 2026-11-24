@@ -6,11 +6,19 @@ November 24, 2026. Cases use synthetic inputs or anonymized Commission examples.
 | --- | --- |
 | Independent signed Act, Commission PDF, official public client and app tables | All 4,710 BCSO values, 220 low-income dollar values, 74 blank cells, six rates and six thresholds agree. |
 | Public-client lookup replay | 18,858 BCSO and 5,490 low-income comparisons agreed in the public-client comparison mode. |
-| Named Node tests | 1,024 passed. Coverage includes every table row and six columns, calculation and calendar boundaries, hand calculations, saved scenarios, import validation, historical ledger, planning models, signed outcomes and CSP integrity. |
+| Named Node tests | 1,027 passed. Coverage includes every table row and six columns, calculation and calendar boundaries, hand calculations, saved scenarios, import validation, historical ledger, planning models, signed outcomes and CSP integrity. |
 | Commission worked examples | Parenting adjustment $255.46 and line 10 $414.11. Low-income worksheet B line 10 $244.15, capped to $239.69. Both reproduced. |
-| Pinned official worksheet scenarios | 42 fixture cases. 39 in scope compared both parents’ key lines and the signed transfer, 3 checked explicit scope guards. Four intentional statutory-first outcomes differ from the public-client calculation. |
-| Additional seeded worksheet comparisons | 600 mixed synthetic cases, both named parents as NCP, 1–6 children, fractional days, Schedule B, two payers, extraordinary costs, reversals and credits. All checked lines and all 600 whole-dollar transfers agreed in public-client mode after correcting three half-cent differences found on the first run. |
+| Pinned official worksheet scenarios | 45 fixture cases. 42 in scope compared both parents’ key lines and the signed transfer, 3 checked explicit scope guards. Five intentional statutory-first outcomes differ from the public-client calculation. |
+| Additional seeded worksheet comparisons | 600 mixed synthetic cases, both named parents as NCP, 1–6 children, fractional days, Schedule B, two payers, extraordinary costs, reversals and credits. Both parents’ checked lines and all 600 whole-dollar amounts and payment directions matched the public payment-summary text in public-client mode. The sweep uncovered three cent-level discrepancies and three additional one-dollar discrepancies from prematurely rounding Schedule E. All six were corrected. |
 | Reproducible standalone build | Source rebuild and script integrity check passed. |
+
+## Browser and PDF review
+
+The browser suite uses the real standalone HTML at a simulated GitHub Pages subpath and as a downloaded file. It runs in a fresh browser profile, records page errors and rejects unexpected outgoing network requests. Scenarios cover exact and slider inputs, blocked incomplete drafts, comparison curves and heatmaps, both parenting calendars, saved records, invalid imports, financial privacy, payment receipts and print output.
+
+The release check exercises a 1440-pixel desktop and iPhone-style touch viewports at 430 and 375 CSS pixels. Review included visual inspection of all three workspaces and the five-page US Letter printout. Narrow-screen testing exposed a WebKit navigation overflow. Printing exposed a nearly empty continuation page and unconfigured plans that initially looked like full-year calendars. The release includes corrections for all three issues. These are browser-engine and device-emulation checks. A physical iPhone print-and-share session and a live authenticated official worksheet are separate outstanding checks.
+
+The [sample report](example-report.pdf) was generated in Chromium using the public Commission worked example. Its five pages cover the summary, financial schedules, worksheet audit, parenting plans and findings, and supporting record. Real inputs may produce more pages. PDF text extraction confirmed headings and the reported amounts. The default report distinguishes the manual 245/120 day entry from calendars with no rules entered.
 
 ## Repeat the external comparisons
 

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { calculate } from "../src/engine.mjs";
-import { fromWorksheet } from "../test/worksheet-input.mjs";
+import { fromWorksheet, readPaymentSummary } from "../test/worksheet-input.mjs";
 const bundle = process.argv[2];
 if (!bundle)
   throw new Error(
@@ -61,10 +61,13 @@ try {
     examples = {},
     maxError = {};
   let paymentDifferences = 0;
+  const paymentExamples = [];
+  if (official.length !== cases.length ||
+      official.some((entry, index) => entry.input.id !== cases[index].id))
+    throw new Error("Incomplete or reordered official reference results.");
   for (const { input, lines } of official) {
     const r = calculate(fromWorksheet(input)),
-      i = input.ncp,
-      k = i ? "B" : "A";
+      i = input.ncp;
     const compare = (stage, a, b) => {
       if (Math.abs(a - b) < 0.000001) return;
       errors[stage] = (errors[stage] || 0) + 1;
@@ -72,21 +75,27 @@ try {
       if (!examples[stage])
         examples[stage] = { id: input.id, model: a, reference: b };
     };
-    compare("Adjusted A", r.inc.A.adjusted, lines.adjusted[0]);
-    compare("Adjusted B", r.inc.B.adjusted, lines.adjusted[1]);
+    for (const [p, key] of ["A", "B"].entries()) {
+      compare("L2 " + key, r.inc[key].adjusted, lines.adjusted[p]);
+      compare("L3 " + key, Math.round(r.share[key] * 10000) / 100, lines.percentages[p]);
+      compare("L5 " + key, r.basic[key], lines.basicShares[p]);
+      compare("L7 " + key, r.prorataD[key], lines.expenseShares[p]);
+      compare("L8 " + key, r.adjustedBase[key], lines.adjustedObligation[p]);
+      compare("L9 " + key, r.paid[key], lines.expensePaid[p]);
+      compare("L10 " + key, r.presumptive[key], lines.presumptive[p]);
+    }
     compare("BCSO", r.table.amount, lines.bcso);
-    compare("L5", r.basic[k], lines.basicShares[i]);
     compare("L6", r.credit, lines.timeAdjustment);
-    compare("L7", r.prorataD[k], lines.expenseShares[i]);
-    compare("L8", r.adjustedBase[k], lines.adjustedObligation[i]);
-    compare("L9", r.paid[k], lines.expensePaid[i]);
-    compare("L10", r.presumptive[k], lines.presumptive[i]);
     compare("L11 client", r.clientBeforeE, lines.lowIncome[i]);
     compare("L12", r.deviation, lines.deviations[i]);
     compare("after benefits", r.clientFinal, lines.afterBenefits[i]);
-    const actual = r.roundAward(r.clientFinal),
-      reference = r.roundAward(lines.afterBenefits[i]);
-    if (actual !== reference) paymentDifferences++;
+    const payment = readPaymentSummary(lines.summary);
+    if (Math.abs(r.clientAmount) !== payment.dollars ||
+        (payment.dollars > 0 && r.direction(r.clientFinal) !== payment.payer)) {
+      paymentDifferences++;
+      if (paymentExamples.length < 5)
+        paymentExamples.push({ input, official: lines.summary, cents: r.clientFinal, payer: r.direction(r.clientFinal), printed: lines.finalWhole });
+    }
   }
   console.log(
     JSON.stringify(
@@ -97,12 +106,13 @@ try {
         maxError,
         examples,
         paymentDifferences,
+        paymentExamples,
       },
       null,
       2,
     ),
   );
-  if (Object.keys(errors).length) process.exitCode = 1;
+  if (paymentDifferences || Object.keys(errors).length) process.exitCode = 1;
 } finally {
   rmSync(dir, { recursive: true, force: true });
 }

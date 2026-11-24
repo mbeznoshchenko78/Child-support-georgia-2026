@@ -464,14 +464,16 @@ export function methodNote(s, r) {
     alerts.push(
       "Combined income falls below $800. The lowest published BCSO row is $800. Both actual adjusted incomes are retained.",
     );
-  if (r.clientFinal !== r.final)
+  if (r.clientFinal !== r.final || r.clientAmount !== r.amount)
     alerts.push(
       "Two methods give different results. Following § (b)(7)–(8) and (i.1) gives " +
         cash(r.final) +
-        " signed to the noncustodial column. The published calculator’s sequence gives " +
+        " (" + cash(r.amount, 0) + " rounded) in the noncustodial column. The published calculator’s sequence gives " +
         cash(r.clientFinal) +
-        ". Review both before filing.",
+        " (" + cash(r.clientAmount, 0) + " rounded). Review both before filing.",
     );
+  if (r.amount !== r.roundAward(r.final) || r.clientAmount !== r.roundAward(r.clientFinal))
+    alerts.push("The audit displays cents. The whole-dollar payment uses the underlying allocation and benefits before display rounding. A displayed half dollar can therefore round down.");
   if (Object.values(r.inc).some((i) => i.businessNet < 0))
     alerts.push(
       "A business loss was entered. Its contribution to Schedule A is $0, following the official business calculator’s transfer convention.",

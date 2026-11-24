@@ -1,5 +1,11 @@
 import { example } from '../src/model.mjs';
 
+export function readPaymentSummary(summary) {
+  const match = /^Parent ([AB]) pays Parent ([AB]) \$([\d,]+) a month$/.exec(summary);
+  if (!match || match[1] === match[2]) throw new Error('Unexpected official payment summary: ' + summary);
+  return { payer: match[1], dollars: Number(match[3].replaceAll(',', '')) };
+}
+
 // All amounts in the reference input are monthly; its gross amount already includes
 // self-employment income and its gross/adjusted rankings may differ.
 export function fromWorksheet(input) {

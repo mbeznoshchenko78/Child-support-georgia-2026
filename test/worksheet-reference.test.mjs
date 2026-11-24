@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { calculate } from '../src/engine.mjs';
-import { fromWorksheet } from './worksheet-input.mjs';
+import { fromWorksheet, readPaymentSummary } from './worksheet-input.mjs';
 
 const cases = JSON.parse(readFileSync(new URL('./fixtures/official-results.json', import.meta.url)));
 
@@ -11,6 +11,7 @@ const legislativeDifferences = {
   'low-ceiling-equality':1022.54,
   'low-income-special-mixed':151,
   'one-zero-positive-d':0,
+  'fractional-extra-with-benefit':203.47,
 };
 
 for (const { input, lines } of cases) {
@@ -40,10 +41,11 @@ for (const { input, lines } of cases) {
     assert.equal(result.deviation, lines.deviations[index], 'Official L12 proposed deviations');
     assert.equal(result.clientFinal, lines.afterBenefits[index], 'Official transfer before final dollar rounding');
     assert.equal(result.final, legislativeDifferences[input.id] ?? lines.afterBenefits[index], 'Statutory calculation sequence');
-    const officialRounded = Math.round(Math.abs(lines.afterBenefits[index]));
-    assert.equal(Math.abs(result.roundAward(result.clientFinal)), officialRounded, 'Whole-dollar payment summary');
-    if (officialRounded > 0) {
-      const payer = lines.summary.startsWith('Parent A pays') ? 'A' : 'B';
+    const { dollars, payer } = readPaymentSummary(lines.summary);
+    assert.equal(Math.abs(result.clientAmount), dollars, 'Official whole-dollar payment summary');
+    if (!(input.id in legislativeDifferences))
+      assert.equal(result.amount, result.clientAmount, 'Main whole-dollar award in matching cases');
+    if (dollars > 0) {
       assert.equal(result.direction(result.clientFinal), payer, 'Official payment direction');
     }
   });

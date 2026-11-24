@@ -57,6 +57,17 @@ body {
   -webkit-text-size-adjust: 100%;
   font-variant-numeric: tabular-nums;
 }
+#workspace {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+#scenario-label,
+.savedrow > b,
+.checkgroup label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 button,
 input,
 select,

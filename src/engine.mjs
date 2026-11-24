@@ -189,7 +189,8 @@ export function calculate(s) {
   );
   const extraTotal = sum([extraPaid.A, extraPaid.B]);
   const insuranceE = cents(dentistTotal * share[ncp] - dentistPaid[ncp]);
-  const extraordinaryE = cents(extraTotal * share[ncp] - extraPaid[ncp]);
+  const extraordinaryRaw = extraTotal * share[ncp] - extraPaid[ncp];
+  const extraordinaryE = worksheetCents(extraordinaryRaw);
   const direct = sum(
     Object.keys(DIRECT).map((k) =>
       numberIn(s.deviations[k], -MONEY_LIMIT, MONEY_LIMIT, DIRECT[k]),
@@ -199,18 +200,27 @@ export function calculate(s) {
     throw new Error(
       "A high-income deviation requires combined adjusted income over $40,000 and a proposed upward amount.",
     );
-  const deviation = sum([direct, insuranceE, extraordinaryE]);
+  // Schedule E's prorated share can contain fractions of a cent. Its displayed
+  // amount is rounded, but the payment summary uses the underlying allocation.
+  const deviationRaw = direct + insuranceE + extraordinaryRaw;
+  const deviation = worksheetCents(deviationRaw);
   const benefits = sum([s.parents[ncp].ssa, s.parents[ncp].va]);
-  const afterBenefits = (x) => cents(x <= 0 ? x : Math.max(0, x - benefits));
-  const postDeviation = cents(presumptive[ncp] + deviation);
-  const baseline = afterBenefits(applyCap(presumptive[ncp], low[ncp].cap));
-  const postLow = applyCap(postDeviation, low[ncp].cap);
-  const final = afterBenefits(postLow);
+  const afterBenefits = (x) =>
+    x <= 0 ? x : Math.max(0, x - s.parents[ncp].ssa - s.parents[ncp].va);
+  const postDeviationRaw = presumptive[ncp] + deviationRaw;
+  const postDeviation = worksheetCents(postDeviationRaw);
+  const baselineRaw = afterBenefits(applyCap(presumptive[ncp], low[ncp].cap));
+  const baseline = worksheetCents(baselineRaw);
+  const postLowRaw = applyCap(postDeviationRaw, low[ncp].cap);
+  const postLow = worksheetCents(postLowRaw);
+  const finalRaw = afterBenefits(postLowRaw);
+  const final = worksheetCents(finalRaw);
   const clientBeforeE = applyCap(presumptive[ncp], clientLow[ncp].cap);
-  const clientFinal = afterBenefits(cents(clientBeforeE + deviation));
+  const clientRaw = afterBenefits(clientBeforeE + deviationRaw);
+  const clientFinal = worksheetCents(clientRaw);
   const roundAward = (v) => Math.sign(v) * Math.round(Math.abs(v));
   const direction = (v) => (v === 0 ? null : v > 0 ? ncp : cp);
-  const amount = roundAward(final);
+  const amount = roundAward(finalRaw);
   const signed = signB(amount, ncp);
   numberIn(s.rate, 0, 100, "Planning percentage");
   for (const key of ["current", "dealAmount"]) validMoney(s[key], key);
@@ -261,11 +271,12 @@ export function calculate(s) {
     creditUsed: cents(postLow - final),
     clientBeforeE,
     clientFinal,
+    clientAmount: roundAward(clientRaw),
     lowUsed: cents(postDeviation - postLow),
     amount,
     payer: direction(amount),
     signed,
-    baselineAmount: roundAward(baseline),
+    baselineAmount: roundAward(baselineRaw),
     currentSigned,
     delta: currentSigned === null ? null : cents(signed - currentSigned),
     projected,

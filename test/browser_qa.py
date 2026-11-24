@@ -256,11 +256,12 @@ class BrowserFlows(unittest.TestCase):
         self.shot("small-dark")
         sizes = self.page.evaluate("""() => ({
             viewport: innerWidth, width: document.documentElement.scrollWidth,
-            overflowing: Array.from(document.body.querySelectorAll("*"))
+            overflowing: Array.from(document.querySelectorAll("#workspace button, #workspace input, #workspace select, #workspace summary"))
                 .filter(e=>!e.closest(".heatwrap, .scrolltable") && e.getBoundingClientRect().right>innerWidth+1)
-                .map(e=>[e.tagName,e.id,e.getAttribute("class"),Math.round(e.getBoundingClientRect().right)]).slice(0,20)
+                .map(e=>[e.tagName,e.id,e.dataset.action,e.textContent.slice(0,36),Math.round(e.getBoundingClientRect().right)]).slice(0,20)
         })""")
         self.assertLessEqual(sizes["width"], sizes["viewport"]+1, sizes)
+        self.assertFalse(sizes["overflowing"], sizes)
         self.assertGreater(self.page.locator(".heatwrap").evaluate("e => e.scrollWidth-e.clientWidth"),0)
 
     def test_standalone_downloaded_file(self):
