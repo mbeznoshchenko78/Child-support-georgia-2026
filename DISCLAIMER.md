@@ -1,24 +1,9 @@
-# Disclaimer
+# Use of this calculator
 
-This app provides a simplified Georgia child support planning estimate for supported scenarios only.
+Georgia Support Studio is an independent planning and hearing-preparation tool. The Georgia Child Support Commission publishes the official calculator, worksheet and schedules. Use those forms, follow the court’s instructions and consult a Georgia attorney about contested facts, modifications, deviations and filing requirements.
 
-It is not legal advice, not financial advice, not a court filing tool, and not the official Georgia Child Support Commission calculator or worksheet generator.
+A modeled deviation, negotiated amount, assumed historical balance or high-income projection has no legal effect. The payable amount and effective date depend on the operative order. See the [statutory method](docs/METHOD.md) and [release validation](docs/VALIDATION.md) for supported situations and known differences.
 
-The app is intended for general planning, education, and scenario comparison. It may omit adjustments, deviations, facts, and legal issues that could materially affect an actual child support calculation.
+The app processes financial inputs locally. Data explicitly saved or imported persists in the current browser profile without encryption. Exported files and printed or saved PDFs contain the information included in them. The Privacy and local data control clears this app’s records in the current browser. Manage downloaded files separately.
 
-The calculator currently excludes, among other things:
-
-- low-income adjustment
-- self-employment adjustment
-- preexisting support order adjustment
-- qualified-children adjustment
-- work-related child care expenses
-- extraordinary expenses
-- discretionary deviations
-- taxes, filing status, or other case-specific legal issues
-
-The official Georgia Basic Child Support Obligation table is capped at $40,000 combined monthly income. Any optional extrapolated high-income scenario shown by this app is a planning-only estimate and is not an official Georgia worksheet amount.
-
-Do not rely on this app for court filings, legal deadlines, legal strategy, or final child support obligations. For court use, verify all calculations with the official Georgia Child Support Calculator and, when appropriate, consult a licensed attorney.
-
-Use this app at your own risk. The author makes no warranty that the calculations, assumptions, or outputs are complete, accurate, current, or suitable for any particular legal or personal purpose.
+[Official Georgia calculator](https://csconlinecalc.georgiacourts.gov/)

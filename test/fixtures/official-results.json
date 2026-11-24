@@ -1,0 +1,3150 @@
+[
+  {
+    "input": {
+      "id": "published-parenting",
+      "gross": [
+        10335,
+        6250
+      ],
+      "children": 1,
+      "ncpDays": 120
+    },
+    "lines": {
+      "adjusted": [
+        10335,
+        6250
+      ],
+      "percentages": [
+        62.32,
+        37.68
+      ],
+      "bcso": 1777,
+      "basicShares": [
+        1107.43,
+        669.57
+      ],
+      "timeAdjustment": 255.46,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1107.43,
+        414.11
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1107.43,
+        414.11
+      ],
+      "lowIncome": [
+        1107.43,
+        414.11
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1107.43,
+        414.11
+      ],
+      "afterBenefits": [
+        1107.43,
+        414.11
+      ],
+      "finalWhole": [
+        1107,
+        414
+      ],
+      "summary": "Parent B pays Parent A $414 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "published-low",
+      "gross": [
+        800,
+        1261.5
+      ],
+      "children": 1
+    },
+    "lines": {
+      "adjusted": [
+        800,
+        1261.5
+      ],
+      "percentages": [
+        38.81,
+        61.19
+      ],
+      "bcso": 399,
+      "basicShares": [
+        154.85,
+        244.15
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        154.85,
+        244.15
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        154.85,
+        244.15
+      ],
+      "lowIncome": [
+        152,
+        239.69
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        152,
+        239.69
+      ],
+      "afterBenefits": [
+        152,
+        239.69
+      ],
+      "finalWhole": [
+        152,
+        240
+      ],
+      "summary": "Parent B pays Parent A $240 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "low-plus-deviation",
+      "gross": [
+        800,
+        1261.5
+      ],
+      "children": 1,
+      "flatDeviation": [
+        0,
+        50
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        800,
+        1261.5
+      ],
+      "percentages": [
+        38.81,
+        61.19
+      ],
+      "bcso": 399,
+      "basicShares": [
+        154.85,
+        244.15
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        154.85,
+        244.15
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        154.85,
+        244.15
+      ],
+      "lowIncome": [
+        152,
+        239.69
+      ],
+      "deviations": [
+        0,
+        50
+      ],
+      "subtotal": [
+        152,
+        289.69
+      ],
+      "afterBenefits": [
+        152,
+        289.69
+      ],
+      "finalWhole": [
+        152,
+        290
+      ],
+      "summary": "Parent B pays Parent A $290 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "low-ceiling-equality",
+      "gross": [
+        1000,
+        2450
+      ],
+      "children": 1,
+      "monthlyChildcare": [
+        800,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        1000,
+        2450
+      ],
+      "percentages": [
+        28.99,
+        71.01
+      ],
+      "bcso": 640,
+      "basicShares": [
+        185.54,
+        454.46
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        231.92,
+        568.08
+      ],
+      "adjustedObligation": [
+        417.46,
+        1022.54
+      ],
+      "expensePaid": [
+        800,
+        0
+      ],
+      "presumptive": [
+        -382.54,
+        1022.54
+      ],
+      "lowIncome": [
+        -382.54,
+        467
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        -382.54,
+        467
+      ],
+      "afterBenefits": [
+        -382.54,
+        467
+      ],
+      "finalWhole": [
+        -383,
+        467
+      ],
+      "summary": "Parent B pays Parent A $467 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "low-upper-midpoint",
+      "gross": [
+        800,
+        1575
+      ],
+      "children": 1,
+      "monthlyChildcare": [
+        400,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        800,
+        1575
+      ],
+      "percentages": [
+        33.68,
+        66.32
+      ],
+      "bcso": 459,
+      "basicShares": [
+        154.59,
+        304.41
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        134.72,
+        265.28
+      ],
+      "adjustedObligation": [
+        289.31,
+        569.69
+      ],
+      "expensePaid": [
+        400,
+        0
+      ],
+      "presumptive": [
+        -110.69,
+        569.69
+      ],
+      "lowIncome": [
+        -110.69,
+        295
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        -110.69,
+        295
+      ],
+      "afterBenefits": [
+        -110.69,
+        295
+      ],
+      "finalWhole": [
+        -111,
+        295
+      ],
+      "summary": "Parent B pays Parent A $295 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "low-first-printed",
+      "gross": [
+        800,
+        1500.01
+      ],
+      "children": 1,
+      "monthlyChildcare": [
+        400,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        800,
+        1500.01
+      ],
+      "percentages": [
+        34.78,
+        65.22
+      ],
+      "bcso": 442,
+      "basicShares": [
+        153.73,
+        288.27
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        139.12,
+        260.88
+      ],
+      "adjustedObligation": [
+        292.85,
+        549.15
+      ],
+      "expensePaid": [
+        400,
+        0
+      ],
+      "presumptive": [
+        -107.15,
+        549.15
+      ],
+      "lowIncome": [
+        -107.15,
+        295
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        -107.15,
+        295
+      ],
+      "afterBenefits": [
+        -107.15,
+        295
+      ],
+      "finalWhole": [
+        -107,
+        295
+      ],
+      "summary": "Parent B pays Parent A $295 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "reverse-with-low-ncp",
+      "gross": [
+        10000,
+        900
+      ],
+      "children": 2,
+      "ncpDays": 180
+    },
+    "lines": {
+      "adjusted": [
+        10000,
+        900
+      ],
+      "percentages": [
+        91.74,
+        8.26
+      ],
+      "bcso": 2038,
+      "basicShares": [
+        1869.66,
+        168.34
+      ],
+      "timeAdjustment": 984.11,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1869.66,
+        -815.77
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1869.66,
+        -815.77
+      ],
+      "lowIncome": [
+        1869.66,
+        -815.77
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1869.66,
+        -815.77
+      ],
+      "afterBenefits": [
+        1869.66,
+        -815.77
+      ],
+      "finalWhole": [
+        1870,
+        -816
+      ],
+      "summary": "Parent A pays Parent B $816 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "reverse-with-low-cp",
+      "gross": [
+        1600,
+        800
+      ],
+      "children": 1,
+      "ncpDays": 180,
+      "monthlyHealth": [
+        0,
+        1000
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        1600,
+        800
+      ],
+      "percentages": [
+        66.67,
+        33.33
+      ],
+      "bcso": 459,
+      "basicShares": [
+        306.02,
+        152.98
+      ],
+      "timeAdjustment": 221.64,
+      "expenseShares": [
+        666.7,
+        333.3
+      ],
+      "adjustedObligation": [
+        972.72,
+        264.64
+      ],
+      "expensePaid": [
+        0,
+        1000
+      ],
+      "presumptive": [
+        972.72,
+        -735.36
+      ],
+      "lowIncome": [
+        304,
+        -735.36
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        304,
+        -735.36
+      ],
+      "afterBenefits": [
+        304,
+        -735.36
+      ],
+      "finalWhole": [
+        304,
+        -735
+      ],
+      "summary": "Parent A pays Parent B $735 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "reverse-with-benefits",
+      "gross": [
+        10000,
+        900
+      ],
+      "children": 2,
+      "ncpDays": 180,
+      "dependentSocialSecurity": [
+        0,
+        500
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        10000,
+        900
+      ],
+      "percentages": [
+        91.74,
+        8.26
+      ],
+      "bcso": 2038,
+      "basicShares": [
+        1869.66,
+        168.34
+      ],
+      "timeAdjustment": 984.11,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1869.66,
+        -815.77
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1869.66,
+        -815.77
+      ],
+      "lowIncome": [
+        1869.66,
+        -815.77
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1869.66,
+        -815.77
+      ],
+      "afterBenefits": [
+        1869.66,
+        -815.77
+      ],
+      "finalWhole": [
+        1870,
+        -816
+      ],
+      "summary": "Parent A pays Parent B $816 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "both-d-with-e",
+      "gross": [
+        5800,
+        6900
+      ],
+      "children": 2,
+      "ncpDays": 97.5,
+      "monthlyHealth": [
+        115.32,
+        42.87
+      ],
+      "monthlyChildcare": [
+        96.5,
+        287.9
+      ],
+      "monthlyEducation": [
+        210,
+        55.5
+      ],
+      "monthlyExtraMedical": [
+        0,
+        30
+      ],
+      "monthlySpecial": [
+        135,
+        120
+      ],
+      "flatDeviation": [
+        0,
+        40
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        5800,
+        6900
+      ],
+      "percentages": [
+        45.67,
+        54.33
+      ],
+      "bcso": 2243,
+      "basicShares": [
+        1024.38,
+        1218.62
+      ],
+      "timeAdjustment": 166.54,
+      "expenseShares": [
+        247.8,
+        294.79
+      ],
+      "adjustedObligation": [
+        1272.18,
+        1346.87
+      ],
+      "expensePaid": [
+        211.82,
+        330.77
+      ],
+      "presumptive": [
+        1060.36,
+        1016.1
+      ],
+      "lowIncome": [
+        1060.36,
+        1016.1
+      ],
+      "deviations": [
+        -82.17,
+        122.17
+      ],
+      "subtotal": [
+        978.19,
+        1138.27
+      ],
+      "afterBenefits": [
+        978.19,
+        1138.27
+      ],
+      "finalWhole": [
+        978,
+        1138
+      ],
+      "summary": "Parent B pays Parent A $1138 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "d-and-benefits",
+      "gross": [
+        3600,
+        5400
+      ],
+      "children": 2,
+      "ncpDays": 60,
+      "monthlyHealth": [
+        150,
+        0
+      ],
+      "monthlyChildcare": [
+        0,
+        220
+      ],
+      "dependentSocialSecurity": [
+        0,
+        200
+      ],
+      "dependentVeterans": [
+        0,
+        100
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        3600,
+        5400
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 1807,
+      "basicShares": [
+        722.8,
+        1084.2
+      ],
+      "timeAdjustment": 30.49,
+      "expenseShares": [
+        148,
+        222
+      ],
+      "adjustedObligation": [
+        870.8,
+        1275.71
+      ],
+      "expensePaid": [
+        150,
+        220
+      ],
+      "presumptive": [
+        720.8,
+        1055.71
+      ],
+      "lowIncome": [
+        720.8,
+        1055.71
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        720.8,
+        1055.71
+      ],
+      "afterBenefits": [
+        720.8,
+        755.71
+      ],
+      "finalWhole": [
+        721,
+        756
+      ],
+      "summary": "Parent B pays Parent A $756 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "credits-saturate",
+      "gross": [
+        3600,
+        5400
+      ],
+      "children": 2,
+      "ncpDays": 60,
+      "dependentSocialSecurity": [
+        0,
+        2000
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        3600,
+        5400
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 1807,
+      "basicShares": [
+        722.8,
+        1084.2
+      ],
+      "timeAdjustment": 30.49,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        722.8,
+        1053.71
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        722.8,
+        1053.71
+      ],
+      "lowIncome": [
+        722.8,
+        1053.71
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        722.8,
+        1053.71
+      ],
+      "afterBenefits": [
+        722.8,
+        0
+      ],
+      "finalWhole": [
+        723,
+        0
+      ],
+      "summary": "Parent B pays Parent A $0 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "equal-time",
+      "gross": [
+        4950,
+        6250
+      ],
+      "children": 3,
+      "ncpDays": 182.5
+    },
+    "lines": {
+      "adjusted": [
+        4950,
+        6250
+      ],
+      "percentages": [
+        44.2,
+        55.8
+      ],
+      "bcso": 2437,
+      "basicShares": [
+        1077.15,
+        1359.85
+      ],
+      "timeAdjustment": 1218.5,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1077.15,
+        141.35
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1077.15,
+        141.35
+      ],
+      "lowIncome": [
+        1077.15,
+        141.35
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1077.15,
+        141.35
+      ],
+      "afterBenefits": [
+        1077.15,
+        141.35
+      ],
+      "finalWhole": [
+        1077,
+        141
+      ],
+      "summary": "Parent B pays Parent A $141 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "equal-time-equal-gross",
+      "gross": [
+        4800,
+        4800
+      ],
+      "children": 1,
+      "ncpDays": 182.5,
+      "ncp": 0
+    },
+    "lines": {
+      "adjusted": [
+        4800,
+        4800
+      ],
+      "percentages": [
+        50,
+        50
+      ],
+      "bcso": 1252,
+      "basicShares": [
+        626,
+        626
+      ],
+      "timeAdjustment": 626,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        0,
+        626
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        0,
+        626
+      ],
+      "lowIncome": [
+        0,
+        626
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        0,
+        626
+      ],
+      "afterBenefits": [
+        0,
+        626
+      ],
+      "finalWhole": [
+        0,
+        626
+      ],
+      "summary": "Parent A pays Parent B $0 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "different-gross-adjusted-rank",
+      "gross": [
+        5000,
+        6000
+      ],
+      "priorSupport": [
+        0,
+        1600
+      ],
+      "children": 2,
+      "ncpDays": 182.5
+    },
+    "lines": {
+      "adjusted": [
+        5000,
+        4400
+      ],
+      "percentages": [
+        53.19,
+        46.81
+      ],
+      "bcso": 1842,
+      "basicShares": [
+        979.76,
+        862.24
+      ],
+      "timeAdjustment": 921,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        979.76,
+        -58.76
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        979.76,
+        -58.76
+      ],
+      "lowIncome": [
+        979.76,
+        -58.76
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        979.76,
+        -58.76
+      ],
+      "afterBenefits": [
+        979.76,
+        -58.76
+      ],
+      "finalWhole": [
+        980,
+        -59
+      ],
+      "summary": "Parent A pays Parent B $59 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "self-employment-qualified",
+      "gross": [
+        10000,
+        6900
+      ],
+      "selfEmployment": [
+        5400,
+        2400
+      ],
+      "priorSupport": [
+        300,
+        0
+      ],
+      "qualified": [
+        1,
+        0
+      ],
+      "children": 2,
+      "ncpDays": 70.75
+    },
+    "lines": {
+      "adjusted": [
+        8347.9,
+        6716.4
+      ],
+      "percentages": [
+        55.42,
+        44.58
+      ],
+      "bcso": 2474,
+      "basicShares": [
+        1371.09,
+        1102.91
+      ],
+      "timeAdjustment": 68.2,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1371.09,
+        1034.71
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1371.09,
+        1034.71
+      ],
+      "lowIncome": [
+        1371.09,
+        1034.71
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1371.09,
+        1034.71
+      ],
+      "afterBenefits": [
+        1371.09,
+        1034.71
+      ],
+      "finalWhole": [
+        1371,
+        1035
+      ],
+      "summary": "Parent B pays Parent A $1035 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "self-employment-cap",
+      "gross": [
+        25000,
+        4500
+      ],
+      "selfEmployment": [
+        20000,
+        0
+      ],
+      "children": 1,
+      "ncpDays": 60
+    },
+    "lines": {
+      "adjusted": [
+        23756.75,
+        4500
+      ],
+      "percentages": [
+        84.07,
+        15.93
+      ],
+      "bcso": 2528,
+      "basicShares": [
+        2125.29,
+        402.71
+      ],
+      "timeAdjustment": 42.66,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        2125.29,
+        360.05
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        2125.29,
+        360.05
+      ],
+      "lowIncome": [
+        2125.29,
+        360.05
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        2125.29,
+        360.05
+      ],
+      "afterBenefits": [
+        2125.29,
+        360.05
+      ],
+      "finalWhole": [
+        2125,
+        360
+      ],
+      "summary": "Parent B pays Parent A $360 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "bcso-below-first",
+      "gross": [
+        200,
+        500
+      ],
+      "children": 2
+    },
+    "lines": {
+      "adjusted": [
+        200,
+        500
+      ],
+      "percentages": [
+        28.57,
+        71.43
+      ],
+      "bcso": 259,
+      "basicShares": [
+        74,
+        185
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        74,
+        185
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        74,
+        185
+      ],
+      "lowIncome": [
+        48,
+        120
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        48,
+        120
+      ],
+      "afterBenefits": [
+        48,
+        120
+      ],
+      "finalWhole": [
+        48,
+        120
+      ],
+      "summary": "Parent B pays Parent A $120 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "bcso-midpoint",
+      "gross": [
+        2025,
+        3000
+      ],
+      "children": 3
+    },
+    "lines": {
+      "adjusted": [
+        2025,
+        3000
+      ],
+      "percentages": [
+        40.3,
+        59.7
+      ],
+      "bcso": 1624,
+      "basicShares": [
+        654.47,
+        969.53
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        654.47,
+        969.53
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        654.47,
+        969.53
+      ],
+      "lowIncome": [
+        576,
+        969.53
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        576,
+        969.53
+      ],
+      "afterBenefits": [
+        576,
+        969.53
+      ],
+      "finalWhole": [
+        576,
+        970
+      ],
+      "summary": "Parent B pays Parent A $970 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "bcso-above-40000",
+      "gross": [
+        30000,
+        22000
+      ],
+      "children": 4,
+      "ncpDays": 119.25
+    },
+    "lines": {
+      "adjusted": [
+        30000,
+        22000
+      ],
+      "percentages": [
+        57.69,
+        42.31
+      ],
+      "bcso": 6168,
+      "basicShares": [
+        3558.32,
+        2609.68
+      ],
+      "timeAdjustment": 869.15,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        3558.32,
+        1740.53
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        3558.32,
+        1740.53
+      ],
+      "lowIncome": [
+        3558.32,
+        1740.53
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        3558.32,
+        1740.53
+      ],
+      "afterBenefits": [
+        3558.32,
+        1740.53
+      ],
+      "finalWhole": [
+        3558,
+        1741
+      ],
+      "summary": "Parent B pays Parent A $1741 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "six-children",
+      "gross": [
+        4000,
+        6000
+      ],
+      "children": 6,
+      "ncpDays": 50
+    },
+    "lines": {
+      "adjusted": [
+        4000,
+        6000
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 2995,
+      "basicShares": [
+        1198,
+        1797
+      ],
+      "timeAdjustment": 29.77,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1198,
+        1767.23
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1198,
+        1767.23
+      ],
+      "lowIncome": [
+        1198,
+        1767.23
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1198,
+        1767.23
+      ],
+      "afterBenefits": [
+        1198,
+        1767.23
+      ],
+      "finalWhole": [
+        1198,
+        1767
+      ],
+      "summary": "Parent B pays Parent A $1767 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "seven-children",
+      "gross": [
+        4000,
+        6000
+      ],
+      "children": 7,
+      "ncpDays": 50
+    },
+    "lines": {
+      "adjusted": [
+        4000,
+        6000
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 2995,
+      "basicShares": [
+        1198,
+        1797
+      ],
+      "timeAdjustment": 29.77,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1198,
+        1767.23
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1198,
+        1767.23
+      ],
+      "lowIncome": [
+        1198,
+        1767.23
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        1198,
+        1767.23
+      ],
+      "afterBenefits": [
+        1198,
+        1767.23
+      ],
+      "finalWhole": [
+        1198,
+        1767
+      ],
+      "summary": "Parent B pays Parent A $1767 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "seven-below-first",
+      "gross": [
+        200,
+        500
+      ],
+      "children": 7
+    },
+    "lines": {
+      "adjusted": [
+        200,
+        500
+      ],
+      "percentages": [
+        28.57,
+        71.43
+      ],
+      "bcso": 170,
+      "basicShares": [
+        48.57,
+        121.43
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        48.57,
+        121.43
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        48.57,
+        121.43
+      ],
+      "lowIncome": [
+        48.57,
+        121.43
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        48.57,
+        121.43
+      ],
+      "afterBenefits": [
+        48.57,
+        121.43
+      ],
+      "finalWhole": [
+        49,
+        121
+      ],
+      "summary": "Parent B pays Parent A $121 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "both-zero",
+      "gross": [
+        0,
+        0
+      ],
+      "children": 1
+    },
+    "lines": {
+      "adjusted": [
+        0,
+        0
+      ],
+      "percentages": [
+        0,
+        0
+      ],
+      "bcso": 170,
+      "basicShares": [
+        0,
+        0
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        0,
+        0
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        0,
+        0
+      ],
+      "lowIncome": [
+        0,
+        0
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        0,
+        0
+      ],
+      "afterBenefits": [
+        0,
+        0
+      ],
+      "finalWhole": [
+        0,
+        0
+      ],
+      "summary": "Parent B pays Parent A $0 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "zero-ncp-expense",
+      "gross": [
+        3000,
+        0
+      ],
+      "children": 1,
+      "monthlyChildcare": [
+        0,
+        250
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        3000,
+        0
+      ],
+      "percentages": [
+        100,
+        0
+      ],
+      "bcso": 562,
+      "basicShares": [
+        562,
+        0
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        250,
+        0
+      ],
+      "adjustedObligation": [
+        812,
+        0
+      ],
+      "expensePaid": [
+        0,
+        250
+      ],
+      "presumptive": [
+        812,
+        -250
+      ],
+      "lowIncome": [
+        812,
+        -250
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        812,
+        -250
+      ],
+      "afterBenefits": [
+        812,
+        -250
+      ],
+      "finalWhole": [
+        812,
+        -250
+      ],
+      "summary": "Parent A pays Parent B $250 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "special-exact-threshold",
+      "gross": [
+        4000,
+        6000
+      ],
+      "children": 1,
+      "monthlySpecial": [
+        0,
+        89.95
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        4000,
+        6000
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 1285,
+      "basicShares": [
+        514,
+        771
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        514,
+        771
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        514,
+        771
+      ],
+      "lowIncome": [
+        514,
+        771
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        514,
+        771
+      ],
+      "afterBenefits": [
+        514,
+        771
+      ],
+      "finalWhole": [
+        514,
+        771
+      ],
+      "summary": "Parent B pays Parent A $771 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "cp-column-zero",
+      "gross": [
+        0,
+        6000
+      ],
+      "children": 2,
+      "ncpDays": 120
+    },
+    "lines": {
+      "adjusted": [
+        0,
+        6000
+      ],
+      "percentages": [
+        0,
+        100
+      ],
+      "bcso": 1523,
+      "basicShares": [
+        0,
+        1523
+      ],
+      "timeAdjustment": 218.94,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        0,
+        1304.06
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        0,
+        1304.06
+      ],
+      "lowIncome": [
+        0,
+        1304.06
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        0,
+        1304.06
+      ],
+      "afterBenefits": [
+        0,
+        1304.06
+      ],
+      "finalWhole": [
+        0,
+        1304
+      ],
+      "summary": "Parent B pays Parent A $1304 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "one-child-cp-benefit-credit-not-transfer",
+      "gross": [
+        3600,
+        5400
+      ],
+      "children": 1,
+      "ncpDays": 80,
+      "dependentSocialSecurity": [
+        200,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        3600,
+        5400
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 1211,
+      "basicShares": [
+        484.4,
+        726.6
+      ],
+      "timeAdjustment": 48.53,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        484.4,
+        678.07
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        484.4,
+        678.07
+      ],
+      "lowIncome": [
+        484.4,
+        678.07
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        484.4,
+        678.07
+      ],
+      "afterBenefits": [
+        284.4,
+        678.07
+      ],
+      "finalWhole": [
+        284,
+        678
+      ],
+      "summary": "Parent B pays Parent A $678 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "low-income-special-mixed",
+      "gross": [
+        3300,
+        900
+      ],
+      "children": 1,
+      "monthlyChildcare": [
+        225,
+        0
+      ],
+      "flatDeviation": [
+        0,
+        80
+      ],
+      "dependentSocialSecurity": [
+        0,
+        20
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        3300,
+        900
+      ],
+      "percentages": [
+        78.57,
+        21.43
+      ],
+      "bcso": 765,
+      "basicShares": [
+        601.06,
+        163.94
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        176.78,
+        48.22
+      ],
+      "adjustedObligation": [
+        777.84,
+        212.16
+      ],
+      "expensePaid": [
+        225,
+        0
+      ],
+      "presumptive": [
+        552.84,
+        212.16
+      ],
+      "lowIncome": [
+        552.84,
+        171
+      ],
+      "deviations": [
+        0,
+        80
+      ],
+      "subtotal": [
+        552.84,
+        251
+      ],
+      "afterBenefits": [
+        552.84,
+        231
+      ],
+      "finalWhole": [
+        553,
+        231
+      ],
+      "summary": "Parent B pays Parent A $231 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "fractional-rounding",
+      "gross": [
+        4763.02,
+        7129.45
+      ],
+      "children": 2,
+      "ncpDays": 103.375,
+      "monthlyHealth": [
+        104.99,
+        0
+      ],
+      "monthlyChildcare": [
+        16.45,
+        257.98
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        4763.02,
+        7129.45
+      ],
+      "percentages": [
+        40.05,
+        59.95
+      ],
+      "bcso": 2164,
+      "basicShares": [
+        866.68,
+        1297.32
+      ],
+      "timeAdjustment": 193.39,
+      "expenseShares": [
+        151.96,
+        227.46
+      ],
+      "adjustedObligation": [
+        1018.64,
+        1331.39
+      ],
+      "expensePaid": [
+        121.44,
+        257.98
+      ],
+      "presumptive": [
+        897.2,
+        1073.41
+      ],
+      "lowIncome": [
+        897.2,
+        1073.41
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        897.2,
+        1073.41
+      ],
+      "afterBenefits": [
+        897.2,
+        1073.41
+      ],
+      "finalWhole": [
+        897,
+        1073
+      ],
+      "summary": "Parent B pays Parent A $1073 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "above-low-threshold",
+      "gross": [
+        1000,
+        2450.01
+      ],
+      "children": 1,
+      "monthlyChildcare": [
+        800,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        1000,
+        2450.01
+      ],
+      "percentages": [
+        28.99,
+        71.01
+      ],
+      "bcso": 640,
+      "basicShares": [
+        185.54,
+        454.46
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        231.92,
+        568.08
+      ],
+      "adjustedObligation": [
+        417.46,
+        1022.54
+      ],
+      "expensePaid": [
+        800,
+        0
+      ],
+      "presumptive": [
+        -382.54,
+        1022.54
+      ],
+      "lowIncome": [
+        -382.54,
+        1022.54
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        -382.54,
+        1022.54
+      ],
+      "afterBenefits": [
+        -382.54,
+        1022.54
+      ],
+      "finalWhole": [
+        -383,
+        1023
+      ],
+      "summary": "Parent B pays Parent A $1023 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "large-negative-amount",
+      "gross": [
+        22000,
+        4000
+      ],
+      "children": 5,
+      "ncpDays": 182
+    },
+    "lines": {
+      "adjusted": [
+        22000,
+        4000
+      ],
+      "percentages": [
+        84.62,
+        15.38
+      ],
+      "bcso": 5117,
+      "basicShares": [
+        4330.01,
+        786.99
+      ],
+      "timeAdjustment": 2540.98,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        4330.01,
+        -1753.99
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        4330.01,
+        -1753.99
+      ],
+      "lowIncome": [
+        4330.01,
+        -1753.99
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        4330.01,
+        -1753.99
+      ],
+      "afterBenefits": [
+        4330.01,
+        -1753.99
+      ],
+      "finalWhole": [
+        4330,
+        -1754
+      ],
+      "summary": "Parent A pays Parent B $1754 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "special-below",
+      "gross": [
+        4000,
+        6000
+      ],
+      "children": 1,
+      "monthlySpecial": [
+        39.9,
+        50
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        4000,
+        6000
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 1285,
+      "basicShares": [
+        514,
+        771
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        514,
+        771
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        514,
+        771
+      ],
+      "lowIncome": [
+        514,
+        771
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        514,
+        771
+      ],
+      "afterBenefits": [
+        514,
+        771
+      ],
+      "finalWhole": [
+        514,
+        771
+      ],
+      "summary": "Parent B pays Parent A $771 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "special-above",
+      "gross": [
+        4000,
+        6000
+      ],
+      "children": 1,
+      "monthlySpecial": [
+        39.95,
+        51
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        4000,
+        6000
+      ],
+      "percentages": [
+        40,
+        60
+      ],
+      "bcso": 1285,
+      "basicShares": [
+        514,
+        771
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        514,
+        771
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        514,
+        771
+      ],
+      "lowIncome": [
+        514,
+        771
+      ],
+      "deviations": [
+        -0.04,
+        0.04
+      ],
+      "subtotal": [
+        513.96,
+        771.04
+      ],
+      "afterBenefits": [
+        513.96,
+        771.04
+      ],
+      "finalWhole": [
+        514,
+        771
+      ],
+      "summary": "Parent B pays Parent A $771 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "education-medical-only",
+      "gross": [
+        8000,
+        4500
+      ],
+      "children": 2,
+      "monthlyEducation": [
+        425,
+        200
+      ],
+      "monthlyExtraMedical": [
+        80,
+        14.5
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        8000,
+        4500
+      ],
+      "percentages": [
+        64,
+        36
+      ],
+      "bcso": 2225,
+      "basicShares": [
+        1424,
+        801
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        1424,
+        801
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        1424,
+        801
+      ],
+      "lowIncome": [
+        1424,
+        801
+      ],
+      "deviations": [
+        -44.52,
+        44.52
+      ],
+      "subtotal": [
+        1379.48,
+        845.52
+      ],
+      "afterBenefits": [
+        1379.48,
+        845.52
+      ],
+      "finalWhole": [
+        1379,
+        846
+      ],
+      "summary": "Parent B pays Parent A $846 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "half-dollar-negative",
+      "gross": [
+        6000,
+        6000
+      ],
+      "children": 1,
+      "ncpDays": 182.5,
+      "monthlyHealth": [
+        0,
+        55
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        6000,
+        6000
+      ],
+      "percentages": [
+        50,
+        50
+      ],
+      "bcso": 1465,
+      "basicShares": [
+        732.5,
+        732.5
+      ],
+      "timeAdjustment": 732.5,
+      "expenseShares": [
+        27.5,
+        27.5
+      ],
+      "adjustedObligation": [
+        760,
+        27.5
+      ],
+      "expensePaid": [
+        0,
+        55
+      ],
+      "presumptive": [
+        760,
+        -27.5
+      ],
+      "lowIncome": [
+        760,
+        -27.5
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        760,
+        -27.5
+      ],
+      "afterBenefits": [
+        760,
+        -27.5
+      ],
+      "finalWhole": [
+        760,
+        -27
+      ],
+      "summary": "Parent A pays Parent B $28 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "flat-negative",
+      "gross": [
+        6900,
+        4500
+      ],
+      "children": 1,
+      "flatDeviation": [
+        0,
+        -70
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        6900,
+        4500
+      ],
+      "percentages": [
+        60.53,
+        39.47
+      ],
+      "bcso": 1419,
+      "basicShares": [
+        858.92,
+        560.08
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        858.92,
+        560.08
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        858.92,
+        560.08
+      ],
+      "lowIncome": [
+        858.92,
+        560.08
+      ],
+      "deviations": [
+        0,
+        -70
+      ],
+      "subtotal": [
+        858.92,
+        490.08
+      ],
+      "afterBenefits": [
+        858.92,
+        490.08
+      ],
+      "finalWhole": [
+        859,
+        490
+      ],
+      "summary": "Parent B pays Parent A $490 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "above-low-percent-and-no-minimum",
+      "gross": [
+        1200,
+        100
+      ],
+      "children": 1,
+      "ncpDays": 110
+    },
+    "lines": {
+      "adjusted": [
+        1200,
+        100
+      ],
+      "percentages": [
+        92.31,
+        7.69
+      ],
+      "bcso": 267,
+      "basicShares": [
+        246.47,
+        20.53
+      ],
+      "timeAdjustment": 29.08,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        246.47,
+        -8.55
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        246.47,
+        -8.55
+      ],
+      "lowIncome": [
+        228,
+        -8.55
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        228,
+        -8.55
+      ],
+      "afterBenefits": [
+        228,
+        -8.55
+      ],
+      "finalWhole": [
+        228,
+        -9
+      ],
+      "summary": "Parent A pays Parent B $9 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "below-first-six",
+      "gross": [
+        200,
+        500
+      ],
+      "children": 6
+    },
+    "lines": {
+      "adjusted": [
+        200,
+        500
+      ],
+      "percentages": [
+        28.57,
+        71.43
+      ],
+      "bcso": 417,
+      "basicShares": [
+        119.14,
+        297.86
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        119.14,
+        297.86
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        119.14,
+        297.86
+      ],
+      "lowIncome": [
+        56,
+        140
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        56,
+        140
+      ],
+      "afterBenefits": [
+        56,
+        140
+      ],
+      "finalWhole": [
+        56,
+        140
+      ],
+      "summary": "Parent B pays Parent A $140 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "one-zero-positive-d",
+      "gross": [
+        3000,
+        0
+      ],
+      "children": 1,
+      "flatDeviation": [
+        0,
+        100
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        3000,
+        0
+      ],
+      "percentages": [
+        100,
+        0
+      ],
+      "bcso": 562,
+      "basicShares": [
+        562,
+        0
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        0,
+        0
+      ],
+      "adjustedObligation": [
+        562,
+        0
+      ],
+      "expensePaid": [
+        0,
+        0
+      ],
+      "presumptive": [
+        562,
+        0
+      ],
+      "lowIncome": [
+        562,
+        0
+      ],
+      "deviations": [
+        0,
+        100
+      ],
+      "subtotal": [
+        562,
+        100
+      ],
+      "afterBenefits": [
+        562,
+        100
+      ],
+      "finalWhole": [
+        562,
+        100
+      ],
+      "summary": "Parent B pays Parent A $100 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "near-threshold-cap-3",
+      "gross": [
+        1800,
+        3330
+      ],
+      "children": 3,
+      "monthlyChildcare": [
+        900,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        1800,
+        3330
+      ],
+      "percentages": [
+        35.09,
+        64.91
+      ],
+      "bcso": 1650,
+      "basicShares": [
+        578.99,
+        1071.02
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        315.81,
+        584.19
+      ],
+      "adjustedObligation": [
+        894.8,
+        1655.21
+      ],
+      "expensePaid": [
+        900,
+        0
+      ],
+      "presumptive": [
+        -5.2,
+        1655.21
+      ],
+      "lowIncome": [
+        -5.2,
+        1142
+      ],
+      "deviations": [
+        0,
+        0
+      ],
+      "subtotal": [
+        -5.2,
+        1142
+      ],
+      "afterBenefits": [
+        -5.2,
+        1142
+      ],
+      "finalWhole": [
+        -5,
+        1142
+      ],
+      "summary": "Parent B pays Parent A $1142 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "two-recurring-dental-as-flat-judicial-amount",
+      "gross": [
+        4700,
+        6300
+      ],
+      "children": 2,
+      "ncpDays": 132.25,
+      "monthlyHealth": [
+        75,
+        55
+      ],
+      "flatDeviation": [
+        0,
+        20
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        4700,
+        6300
+      ],
+      "percentages": [
+        42.73,
+        57.27
+      ],
+      "bcso": 2052,
+      "basicShares": [
+        876.82,
+        1175.18
+      ],
+      "timeAdjustment": 401.64,
+      "expenseShares": [
+        55.55,
+        74.45
+      ],
+      "adjustedObligation": [
+        932.37,
+        847.99
+      ],
+      "expensePaid": [
+        75,
+        55
+      ],
+      "presumptive": [
+        857.37,
+        792.99
+      ],
+      "lowIncome": [
+        857.37,
+        792.99
+      ],
+      "deviations": [
+        0,
+        20
+      ],
+      "subtotal": [
+        857.37,
+        812.99
+      ],
+      "afterBenefits": [
+        857.37,
+        812.99
+      ],
+      "finalWhole": [
+        857,
+        813
+      ],
+      "summary": "Parent B pays Parent A $813 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "fractional-extra-with-benefit",
+      "gross": [
+        1925.77,
+        1967.7
+      ],
+      "children": 1,
+      "ncp": 0,
+      "ncpDays": 5.25,
+      "selfEmployment": [
+        1224.2,
+        1290.59
+      ],
+      "priorSupport": [
+        30.23,
+        14.46
+      ],
+      "qualified": [
+        1,
+        1
+      ],
+      "monthlyHealth": [
+        160.69,
+        362.63
+      ],
+      "monthlyChildcare": [
+        379.93,
+        251.89
+      ],
+      "monthlyEducation": [
+        0,
+        0
+      ],
+      "monthlyExtraMedical": [
+        5.9,
+        65.16
+      ],
+      "monthlySpecial": [
+        0,
+        0
+      ],
+      "flatDeviation": [
+        0,
+        0
+      ],
+      "dependentSocialSecurity": [
+        91.53,
+        20.56
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        1528.89,
+        1581.51
+      ],
+      "percentages": [
+        49.15,
+        50.85
+      ],
+      "bcso": 580,
+      "basicShares": [
+        285.07,
+        294.93
+      ],
+      "timeAdjustment": 0.01,
+      "expenseShares": [
+        567.75,
+        587.39
+      ],
+      "adjustedObligation": [
+        852.81,
+        882.32
+      ],
+      "expensePaid": [
+        540.62,
+        614.52
+      ],
+      "presumptive": [
+        312.19,
+        267.8
+      ],
+      "lowIncome": [
+        295,
+        267.8
+      ],
+      "deviations": [
+        29.03,
+        -29.03
+      ],
+      "subtotal": [
+        324.03,
+        238.77
+      ],
+      "afterBenefits": [
+        232.5,
+        218.21
+      ],
+      "finalWhole": [
+        232,
+        218
+      ],
+      "summary": "Parent A pays Parent B $232 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "fractional-extra-just-below-half",
+      "gross": [
+        8619.78,
+        5261.46
+      ],
+      "children": 4,
+      "ncp": 1,
+      "ncpDays": 1.625,
+      "selfEmployment": [
+        1823.23,
+        2328.26
+      ],
+      "priorSupport": [
+        0,
+        0
+      ],
+      "qualified": [
+        0,
+        0
+      ],
+      "monthlyHealth": [
+        337.23,
+        382.86
+      ],
+      "monthlyChildcare": [
+        25.16,
+        102.33
+      ],
+      "monthlyEducation": [
+        76.98,
+        222.83
+      ],
+      "monthlyExtraMedical": [
+        0,
+        0
+      ],
+      "monthlySpecial": [
+        159.93,
+        109.64
+      ],
+      "flatDeviation": [
+        0,
+        0
+      ],
+      "dependentSocialSecurity": [
+        0,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        8480.3,
+        5083.35
+      ],
+      "percentages": [
+        62.52,
+        37.48
+      ],
+      "bcso": 3053,
+      "basicShares": [
+        1908.74,
+        1144.26
+      ],
+      "timeAdjustment": 0,
+      "expenseShares": [
+        529.91,
+        317.67
+      ],
+      "adjustedObligation": [
+        2438.65,
+        1461.93
+      ],
+      "expensePaid": [
+        362.39,
+        485.19
+      ],
+      "presumptive": [
+        2076.26,
+        976.74
+      ],
+      "lowIncome": [
+        2076.26,
+        976.74
+      ],
+      "deviations": [
+        112.24,
+        -112.24
+      ],
+      "subtotal": [
+        2188.5,
+        864.5
+      ],
+      "afterBenefits": [
+        2188.5,
+        864.5
+      ],
+      "finalWhole": [
+        2189,
+        864
+      ],
+      "summary": "Parent B pays Parent A $864 a month"
+    }
+  },
+  {
+    "input": {
+      "id": "fractional-extra-negative-credit",
+      "gross": [
+        35944.57,
+        31741.97
+      ],
+      "children": 2,
+      "ncp": 1,
+      "ncpDays": 27,
+      "selfEmployment": [
+        0,
+        0
+      ],
+      "priorSupport": [
+        0,
+        0
+      ],
+      "qualified": [
+        0,
+        0
+      ],
+      "monthlyHealth": [
+        312.48,
+        128.06
+      ],
+      "monthlyChildcare": [
+        175.59,
+        139.37
+      ],
+      "monthlyEducation": [
+        89.46,
+        210
+      ],
+      "monthlyExtraMedical": [
+        37.1,
+        191.9
+      ],
+      "monthlySpecial": [
+        135.61,
+        40.01
+      ],
+      "flatDeviation": [
+        0,
+        0
+      ],
+      "dependentSocialSecurity": [
+        0,
+        0
+      ]
+    },
+    "lines": {
+      "adjusted": [
+        35944.57,
+        31741.97
+      ],
+      "percentages": [
+        53.1,
+        46.9
+      ],
+      "bcso": 4736,
+      "basicShares": [
+        2514.82,
+        2221.18
+      ],
+      "timeAdjustment": 8.53,
+      "expenseShares": [
+        401.17,
+        354.33
+      ],
+      "adjustedObligation": [
+        2915.99,
+        2566.98
+      ],
+      "expensePaid": [
+        488.07,
+        267.43
+      ],
+      "presumptive": [
+        2427.92,
+        2299.55
+      ],
+      "lowIncome": [
+        2427.92,
+        2299.55
+      ],
+      "deviations": [
+        154.05,
+        -154.05
+      ],
+      "subtotal": [
+        2581.97,
+        2145.5
+      ],
+      "afterBenefits": [
+        2581.97,
+        2145.5
+      ],
+      "finalWhole": [
+        2582,
+        2145
+      ],
+      "summary": "Parent B pays Parent A $2145 a month"
+    }
+  }
+]

@@ -1,0 +1,39 @@
+name: Calculator validation
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  calculation:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run check && npm test
+  browser:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install playwright==1.59.0
+      - run: python -m playwright install --with-deps ${{ matrix.engine }}
+      - run: python test/browser_qa.py
+        env:
+          GA_TEST_BROWSER: ${{ matrix.engine }}
+          GA_BUNDLED_BROWSER: '1'
+          GA_QA_OUTPUT: qa-output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-${{ matrix.engine }}
+          path: qa-output/
