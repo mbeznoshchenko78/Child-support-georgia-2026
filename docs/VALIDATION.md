@@ -11,14 +11,17 @@ November 24, 2026. Cases use synthetic inputs or anonymized Commission examples.
 | Pinned official worksheet scenarios | 45 fixture cases. 42 in scope compared both parents’ key lines and the signed transfer, 3 checked explicit scope guards. Five intentional statutory-first outcomes differ from the public-client calculation. |
 | Additional seeded worksheet comparisons | 600 mixed synthetic cases, both named parents as NCP, 1–6 children, fractional days, Schedule B, two payers, extraordinary costs, reversals and credits. Both parents’ checked lines and all 600 whole-dollar amounts and payment directions matched the public payment-summary text in public-client mode. The sweep uncovered three cent-level discrepancies and three additional one-dollar discrepancies from prematurely rounding Schedule E. All six were corrected. |
 | Reproducible standalone build | Source rebuild and script integrity check passed. |
+| Chromium 147.0.7727.15 and WebKit 26.4 | All 18 browser workflows passed in each engine, 36 successful executions. Both engines completed the save/load and import/export lifecycle, narrow-screen checks, local-file test and print-view checks without unexpected requests or uncaught page errors. |
 
 ## Browser and PDF review
+
+All three jobs passed on application commit `1434b55c112758c38ddd456809c40f6b04d7c278`. The reviewed standalone HTML has SHA-256 `232c6ace1e3510a285a06472a1ed4125e8de4211ab8362db3425a631169f3d6a`. Screenshots for both engines and Chromium's print output are in the [GitHub Actions run](https://github.com/mbeznoshchenko78/Child-support-georgia-2026/actions/runs/45495314904).
 
 The browser suite uses the real standalone HTML at a simulated GitHub Pages subpath and as a downloaded file. It runs in a fresh browser profile, records page errors and rejects unexpected outgoing network requests. Scenarios cover exact and slider inputs, blocked incomplete drafts, comparison curves and heatmaps, both parenting calendars, saved records, invalid imports, financial privacy, payment receipts and print output.
 
 The release check exercises a 1440-pixel desktop and iPhone-style touch viewports at 430 and 375 CSS pixels. Review included visual inspection of all three workspaces and the five-page US Letter printout. Narrow-screen testing exposed a WebKit navigation overflow. Printing exposed a nearly empty continuation page and unconfigured plans that initially looked like full-year calendars. The release includes corrections for all three issues. These are browser-engine and device-emulation checks. A physical iPhone print-and-share session and a live authenticated official worksheet are separate outstanding checks.
 
-The [sample report](example-report.pdf) was generated in Chromium using the public Commission worked example. Its five pages cover the summary, financial schedules, worksheet audit, parenting plans and findings, and supporting record. Real inputs may produce more pages. PDF text extraction confirmed headings and the reported amounts. The default report distinguishes the manual 245/120 day entry from calendars with no rules entered.
+The [sample report](example-report.pdf) was generated in Chromium using the public Commission worked example. Its five pages cover the summary, financial schedules, worksheet audit, parenting plans and findings, and supporting record. Real inputs may produce more pages. PDF text extraction confirmed headings and the reported amounts. The final Chromium run reproduced the sample page-for-page, with identical text and rendered pixels. The default report distinguishes the manual 245/120 day entry from calendars with no rules entered.
 
 ## Repeat the external comparisons
 

@@ -4,6 +4,8 @@
 
 Use the isolated 2.0 review branch or its self-contained HTML. The production GitHub Pages branch is main. The review workflow has read-only repository access and performs validation only. It has no deployment step.
 
+The owner’s private browser preview uses the same standalone file as the review branch. Its browser storage is separate from the GitHub Pages origin. The [validation report](VALIDATION.md) identifies the reviewed file by SHA-256 and links the browser runs.
+
 ## After owner approval
 
 1. Recheck current Georgia Commission notices, the effective statutory version and the documented source checks. Address remaining official-worksheet reconciliation notes with counsel or the appropriate reviewer.
