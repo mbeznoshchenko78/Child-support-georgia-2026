@@ -57,7 +57,10 @@ class BrowserFlows(unittest.TestCase):
         self.page.set_default_timeout(4000)
         self.page.goto(URL)
         self.page.locator(".resultcard").wait_for()
-        self.action = lambda name: self.page.locator('[data-action="'+name+'"]:visible').first
+        def action(name):
+            scope=self.page.locator("#modal[open]") if self.page.locator("#modal[open]").count() else self.page
+            return scope.locator('[data-action="'+name+'"]:visible').first
+        self.action = action
         self.key = lambda key: self.page.locator('[data-key="'+key+'"]')
 
     def tearDown(self):
@@ -75,7 +78,7 @@ class BrowserFlows(unittest.TestCase):
         self.action("save").click()
         self.page.locator("#save-form input").fill(name)
         self.page.locator("#save-form button[type=submit]").first.click()
-        self.page.wait_for_function("!document.querySelector('dialog').open")
+        self.page.locator("dialog").wait_for(state="hidden")
 
     def shot(self, filename):
         folder = os.environ.get("GA_QA_OUTPUT")
@@ -164,7 +167,7 @@ class BrowserFlows(unittest.TestCase):
             payload=json.loads(path.read_text())
             self.assertEqual(payload["version"],2)
             self.page.locator("#import-file").set_input_files(path)
-            self.page.wait_for_function("document.querySelectorAll('.savedrow').length === 2")
+            self.page.locator(".savedrow").nth(1).wait_for()
         self.action("privacy").click();self.action("clear-dialog").click();self.action("clear-confirm").click()
         self.assertIsNone(self.page.evaluate("(k)=>localStorage.getItem(k)", DATA))
 
@@ -172,7 +175,7 @@ class BrowserFlows(unittest.TestCase):
         self.save("Keep")
         self.action("library").click()
         self.page.locator("#import-file").set_input_files({"name":"invalid.json","mimeType":"application/json","buffer":b"{}"})
-        self.assertIn("fields",self.page.locator("#modal-error").inner_text())
+        self.page.locator("#modal-error").get_by_text("fields",exact=False).wait_for()
         self.assertEqual(self.page.locator(".savedrow").count(),1)
 
     def test_theme_persists_without_auto_saving_finances(self):
