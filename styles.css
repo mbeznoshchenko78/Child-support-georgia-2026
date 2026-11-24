@@ -1122,7 +1122,7 @@ textarea {
     justify-content: space-around;
   }
   .mainnav button {
-    min-height: 39px;
+    min-height: 44px;
     justify-content: center;
     flex: 1;
     padding: 7px 5px;
@@ -1253,7 +1253,15 @@ textarea {
     margin-left: 0;
   }
   .charttabs {
-    flex-wrap: wrap;
+    width: 100%;
+  }
+  .charttabs button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 40px;
+    padding: 6px 4px;
+    line-height: 1.15;
+    white-space: normal;
   }
   .inlinechoice select,
   .two select {
@@ -1277,6 +1285,15 @@ textarea {
   }
   .panel h2 {
     font-size: 1.2rem;
+  }
+}
+@media (max-width: 410px) {
+  .mainnav button {
+    min-width: 0;
+    padding-inline: 4px;
+  }
+  .mainnav .icon {
+    display: none;
   }
 }
 @media (max-width: 380px) {

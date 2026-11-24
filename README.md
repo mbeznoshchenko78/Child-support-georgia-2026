@@ -17,6 +17,7 @@ The initial anonymized inputs reproduce the Commission’s published January 202
 ## Review materials
 
 - [User guide](docs/GUIDE.md)
+- [Five-page sample PDF from the Commission's worked example](docs/example-report.pdf)
 - [Statutory method, rounding and scope](docs/METHOD.md)
 - [Enacted and Commission table comparison](docs/TABLES.md)
 - [Release validation and remaining uncertainties](docs/VALIDATION.md)

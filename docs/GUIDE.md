@@ -38,6 +38,8 @@ Complete the evidence checklist, enter anonymized exhibit references and record 
 
 Choose **Print / PDF** and use your browser’s PDF destination. On iPhone, open the print preview and use the share sheet to save to Files. The report records both parents’ finances, line-by-line calculations, payment direction, calendar rules, proposed findings, ledger, checklist and sources. Browser printing may add a URL or date in margins if browser headers and footers are enabled.
 
+The [five-page sample PDF](example-report.pdf) shows the opening worked example with manual parenting days. Reports distinguish a calendar you have entered from an empty calendar. Longer notes, multiple calendar rules or a detailed payment ledger can add pages.
+
 The official Basic Information Worksheet, Schedule A Gross Income, Schedule B Adjusted Income, Schedule C Parenting Time Adjustment, Schedule D Additional Expenses, and Schedule E Deviations remain the Commission’s forms. The printable report supports discussions and exhibit preparation. [Official calculator and user guide](https://csconlinecalc.georgiacourts.gov/media/userguide2.pdf)
 
 ## Local data
