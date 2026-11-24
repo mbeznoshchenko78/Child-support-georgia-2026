@@ -399,16 +399,21 @@ export function paymentList(s) {
       )
     : "";
 }
+function hasCalendarInputs(s, key) {
+  return s[key].rules.length > 0 || s[key].base !== "A" || s.timeSource === key;
+}
 function plansSummary(s) {
-  const existing = planResult(s.existing),
-    proposed = planResult(s.proposed);
+  const existing = hasCalendarInputs(s, "existing") && planResult(s.existing),
+    proposed = hasCalendarInputs(s, "proposed") && planResult(s.proposed);
+  if (!existing && !proposed)
+    return "<p>No existing or proposed calendar has been entered. The worksheet uses the parenting days shown in the summary.</p>";
   return table(
     ["Annual average", "Existing", "Proposed", "Change"],
     ["A", "B"].map((k) => [
       "Parent " + k,
-      num(existing.annual[k]),
-      num(proposed.annual[k]),
-      num(proposed.annual[k] - existing.annual[k]),
+      existing ? num(existing.annual[k]) : "No plan entered",
+      proposed ? num(proposed.annual[k]) : "No plan entered",
+      existing && proposed ? num(proposed.annual[k] - existing.annual[k]) : "—",
     ]),
   );
 }
@@ -624,6 +629,7 @@ export function report(s, r, name) {
     ["existing", "Existing"],
     ["proposed", "Proposed"],
   ]) {
+    if (!hasCalendarInputs(s, key)) continue;
     const plan = s[key],
       result = planResult(plan);
     planDetails += rsection(

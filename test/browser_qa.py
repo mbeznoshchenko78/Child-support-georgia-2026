@@ -156,6 +156,7 @@ class BrowserFlows(unittest.TestCase):
         self.action("library").click();self.action("load").click();self.action("load-confirm").click()
         self.assertIn("$414",self.page.locator(".amount").inner_text())
         self.action("library").click();self.action("delete-dialog").click();self.action("delete-confirm").click()
+        self.page.locator(".savedrow").first.wait_for()
         self.assertEqual(self.page.locator(".savedrow").count(),1)
 
     def test_import_export_and_clear(self):
@@ -175,7 +176,7 @@ class BrowserFlows(unittest.TestCase):
         self.save("Keep")
         self.action("library").click()
         self.page.locator("#import-file").set_input_files({"name":"invalid.json","mimeType":"application/json","buffer":b"{}"})
-        self.page.locator("#modal-error").get_by_text("fields",exact=False).wait_for()
+        self.page.locator("#modal-error").filter(has_text="fields").wait_for()
         self.assertEqual(self.page.locator(".savedrow").count(),1)
 
     def test_theme_persists_without_auto_saving_finances(self):
@@ -252,9 +253,15 @@ class BrowserFlows(unittest.TestCase):
         self.start(mobile=True,width=375)
         self.action("theme").click()
         self.mode("analysis")
-        self.assertTrue(self.page.evaluate("document.documentElement.scrollWidth<=innerWidth+1"))
-        self.assertGreater(self.page.locator(".heatwrap").evaluate("e => e.scrollWidth-e.clientWidth"),0)
         self.shot("small-dark")
+        sizes = self.page.evaluate("""() => ({
+            viewport: innerWidth, width: document.documentElement.scrollWidth,
+            overflowing: Array.from(document.body.querySelectorAll("*"))
+                .filter(e=>!e.closest(".heatwrap, .scrolltable") && e.getBoundingClientRect().right>innerWidth+1)
+                .map(e=>[e.tagName,e.id,e.getAttribute("class"),Math.round(e.getBoundingClientRect().right)]).slice(0,20)
+        })""")
+        self.assertLessEqual(sizes["width"], sizes["viewport"]+1, sizes)
+        self.assertGreater(self.page.locator(".heatwrap").evaluate("e => e.scrollWidth-e.clientWidth"),0)
 
     def test_standalone_downloaded_file(self):
         self.page.goto((ROOT/"index.html").as_uri())
@@ -267,6 +274,7 @@ class BrowserFlows(unittest.TestCase):
         self.assertTrue(self.page.locator(".paperpage").first.is_visible())
         self.assertFalse(self.page.locator("#workspace").is_visible())
         self.assertEqual(self.page.locator(".paperpage").count(),5)
+        self.assertIn("No existing or proposed calendar", self.page.locator("#printout").text_content())
         folder=os.environ.get("GA_QA_OUTPUT")
         if TARGET=="chromium" and folder:
             Path(folder).mkdir(parents=True,exist_ok=True)
