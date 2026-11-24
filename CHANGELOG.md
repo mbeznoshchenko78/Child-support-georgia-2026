@@ -11,4 +11,6 @@
 | Court preparation | Calculation explanation | Schedules A–E record, findings and checklist, existing/proposed plans, dated payment budget, printable attorney discussion report. |
 | Delivery | Three static assets | Source modules, deterministic single-file offline build, named automated tests and independent source replay. Static GitHub Pages remains supported. |
 
+The review revision raises both base-pay sliders to $30,000 monthly ($360,000 annually) and displays parenting days to hundredths in the calculator, analysis and court report.
+
 The original release remains available in Git history at `f7567493808f02f1128b29a63af0a380af7cd5a9`. Version 1 stored no scenarios, so there is no 1.0 saved-data migration.

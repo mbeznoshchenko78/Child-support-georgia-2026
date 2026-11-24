@@ -3,11 +3,14 @@ import {
   esc,
   cash,
   num,
+  remainingDaysText,
+  salarySliderMax,
   clean,
   signCash,
   direction,
   icon,
   field,
+  dayField,
   select,
   check,
   area,
@@ -231,12 +234,12 @@ export function timeControls(s) {
   return (
     '<div class="timevalues"><span><i class="dot A"></i>Parent A</span><span><i class="dot B"></i>Parent B</span></div>' +
     '<div class="timeinputs">' +
-    field(s, "daysA", "Parent A days", { max: 365, step: "any" }) +
+    dayField(s, "daysA", "Parent A days") +
     '<span id="complement">' +
-    num(365 - s.daysA) +
+    remainingDaysText(s.daysA) +
     " <small>days</small></span></div>" +
-    '<label class="sr" for="days-slider">Parent A annual parenting days</label><input id="days-slider" class="range time" type="range" min="0" max="365" step="any" value="' +
-    s.daysA +
+    '<label class="sr" for="days-slider">Parent A annual parenting days</label><input id="days-slider" class="range time" type="range" min="0" max="365" step="0.01" data-day-input="1" value="' +
+    num(s.daysA) +
     '" data-range="daysA"><div class="rangefoot"><span>0 days</span><span>Equal time · 182.5</span><span>365 days</span></div>' +
     check(s, "ordered", "Parenting time is court-ordered") +
     note(
@@ -255,9 +258,7 @@ export function timeControls(s) {
           "separateResidence",
           "Use a distinct residence count to determine custodial status",
         ) +
-        field(s, "residenceA", "Residence days for Parent A · if distinct", {
-          max: 365,
-        }) +
+        dayField(s, "residenceA", "Residence days for Parent A · if distinct") +
         select(
           s,
           "tie",
@@ -277,11 +278,10 @@ export function timeControls(s) {
           ? '<div class="two">' +
             s.perChild
               .map((v, i) =>
-                field(
+                dayField(
                   s,
                   "perChild." + i,
                   "Child " + (i + 1) + " · Parent A days",
-                  { max: 365 },
                 ),
               )
               .join("") +
@@ -300,10 +300,7 @@ export function quick(s) {
     .map((k) => {
       const path = "parents." + k + ".income.salary",
         amount = s.parents[k].income.salary / divisor;
-      const max = Math.max(
-        s.period === "annual" ? 240000 : 20000,
-        Math.ceil(amount),
-      );
+      const max = salarySliderMax(s.period, amount);
       return (
         '<div class="paybox ' +
         k +

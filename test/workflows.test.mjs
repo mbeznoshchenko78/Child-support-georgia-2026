@@ -19,6 +19,8 @@ import {
 } from "../src/storage.mjs";
 import { vary, sensitivity, heatData } from "../src/lab.mjs";
 import { esc } from "../src/ui-kit.mjs";
+import { timeControls } from "../src/worksheet-view.mjs";
+import { report } from "../src/court.mjs";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 const change = (fn) => {
@@ -34,6 +36,16 @@ function memoryStore() {
     setItem: (k, v) => data.set(k, v),
   };
 }
+test("imported fractional days retain calculation precision while fields and reports show hundredths", () => {
+  const original = change((s) => (s.daysA = 245.375));
+  const [{ data }] = unpack(pack([{ name: "Calendar average", data: original }]));
+  const result = calculate(data);
+  assert.equal(result.days.A, 245.375);
+  assert.match(timeControls(data), /data-key="daysA"[^>]*value="245\.38"/);
+  assert.match(timeControls(data), /id="complement">119\.62 /);
+  assert.match(report(data, result, "Calendar average"), /245\.38 days and Parent B has 119\.62/);
+  assert.equal(data.daysA, original.daysA);
+});
 for (const k of Object.keys(INCOME).filter(
   (k) => !["salary", "receipts", "costs", "addbacks"].includes(k),
 )) {

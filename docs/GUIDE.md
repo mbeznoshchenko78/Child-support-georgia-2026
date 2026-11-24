@@ -2,9 +2,9 @@
 
 ## Get an estimate
 
-1. Choose the number of children in the same custodial situation. Set the income period, then type exact base pay for both parents or use the sliders. The typed amount remains authoritative when it exceeds the initial slider range.
+1. Choose the number of children in the same custodial situation. Set the income period, then type exact base pay for both parents or use the sliders. Each slider spans $0–$30,000 per month or $0–$360,000 per year. Typing a higher amount extends that parent’s slider.
 2. Open **Income breakdown** to enter compensation outside base pay. Enter a representative average of variable income. Avoid counting a bonus or vested award again if it is already included in wages. **Adjusted income** covers the taxable self-employment base, documented earlier support payments and qualified-child proposals.
-3. Enter Parent A’s annual-average parenting days. The other parent receives the remainder of the official worksheet’s 365. If residence and ordered parenting days differ, open **Residence and individual child schedules**. For equal time and equal gross incomes, enter the court’s designation or the designation you are explicitly modeling.
+3. Enter Parent A’s annual-average parenting days. Day sliders move in hundredths. Manual entries round to two decimal places, and the other parent receives the remainder of the worksheet’s 365 days. Imported values and calendar averages retain their underlying precision when displayed to two decimals. If residence and ordered parenting days differ, open **Residence and individual child schedules**. For equal time and equal gross incomes, enter the court’s designation or the designation you are explicitly modeling.
 4. Enter each parent’s child-only health premiums and qualifying work-related care in **Insurance and childcare**. Use the separate discretionary section for proposed dental, vision and extraordinary expenses. Enter future uninsured therapy or orthodontia in the reimbursement budget.
 5. Read **Guideline transfer** for the whole-dollar baseline and payer. **Calculation breakdown** shows the noncustodial column through presumptive line 10 in cents. **Calculation audit** shows both columns, table selection, rounding and subsequent adjustments. On a phone use **View calculation breakdown**.
 

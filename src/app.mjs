@@ -15,6 +15,8 @@ import {
   esc,
   cash,
   num,
+  remainingDaysText,
+  salarySliderMax,
   clean,
   icon,
   get,
@@ -180,7 +182,7 @@ function renderResults() {
       : note(esc(error));
   if (el("retro-output")) el("retro-output").innerHTML = retroOutput(s);
   if (el("complement"))
-    el("complement").innerHTML = num(365 - s.daysA) + " <small>days</small>";
+    el("complement").innerHTML = remainingDaysText(s.daysA) + " <small>days</small>";
   el("print-btn").disabled = !current;
   updateLabel();
 }
@@ -275,9 +277,16 @@ function dataInput(target, onChange) {
       chartUpdate();
       return;
     }
-    value = target.dataset.income
-      ? cents(val * (s.period === "annual" ? 1 : 12))
-      : val;
+    if (target.dataset.dayInput) {
+      const displayed = num(val);
+      value = Number(displayed);
+      if (val !== value || /\.\d{3,}|e/i.test(target.value))
+        target.value = displayed;
+    } else {
+      value = target.dataset.income
+        ? cents(val * (s.period === "annual" ? 1 : 12))
+        : val;
+    }
   }
   if (
     target.type === "date" &&
@@ -300,10 +309,14 @@ function dataInput(target, onChange) {
     const display = target.dataset.income
       ? clean(value / (s.period === "annual" ? 1 : 12))
       : value;
-    if (peer.type === "range" && display > Number(peer.max)) {
-      peer.max = String(display);
-      const foot = peer.nextElementSibling?.lastElementChild;
-      if (foot) foot.textContent = cash(display, 0);
+    if (peer.type === "range" && target.dataset.income) {
+      const max = salarySliderMax(s.period, display);
+      if (max !== Number(peer.max)) {
+        peer.max = String(max);
+        const foot = peer.nextElementSibling;
+        if (foot?.classList.contains("rangefoot"))
+          foot.lastElementChild.textContent = cash(max, 0);
+      }
     }
     peer.value = display;
   }

@@ -115,12 +115,50 @@ class BrowserFlows(unittest.TestCase):
         self.mode("analysis");self.fold("projection");self.key("projection").check()
         self.assertIn("Optional high-income",self.page.locator("#lab-models").inner_text())
 
+    def test_base_pay_slider_endpoints_in_both_workspaces(self):
+        for period, maximum in [("Monthly", 30000), ("Annual", 360000)]:
+            self.mode("calculator")
+            self.page.get_by_role("button", name=period, exact=True).click()
+            for workspace in ["calculator", "analysis"]:
+                if workspace == "analysis":
+                    self.mode(workspace)
+                    self.fold("labinputs")
+                for parent in ["A", "B"]:
+                    key = f"parents.{parent}.income.salary"
+                    slider = self.page.locator(f'[data-range="{key}"]')
+                    self.assertEqual(float(slider.get_attribute("max")), maximum)
+                    self.key(key).fill(str(maximum - 100))
+                    slider.press("End")
+                    self.assertEqual(float(self.key(key).input_value()), maximum)
+
+    def test_day_slider_pointer_and_keyboard_keep_hundredths(self):
+        for workspace in ["calculator", "analysis"]:
+            self.mode(workspace)
+            if workspace == "analysis":
+                self.fold("labinputs")
+            slider = self.page.locator('[data-range="daysA"]')
+            self.assertEqual(float(slider.get_attribute("step")), 0.01)
+            slider.click(position={"x": 91, "y": 8})
+            days = self.key("daysA").input_value()
+            self.assertRegex(days, r"^\d+(?:\.\d{1,2})?$")
+            self.assertAlmostEqual(float(days), float(slider.input_value()))
+            self.key("daysA").fill("182.50")
+            slider.press("ArrowRight")
+            self.assertEqual(self.key("daysA").input_value(), "182.51")
+            if workspace == "calculator":
+                self.assertIn("182.49", self.page.locator("#complement").inner_text())
+
     def test_children_and_fractional_days_with_per_child_guard(self):
         self.page.locator('[data-action=children][data-value="2"]').click()
         self.key("daysA").fill("245.375")
-        self.assertIn("119.625", self.page.locator("#complement").inner_text())
+        self.assertEqual(self.key("daysA").input_value(), "245.38")
+        self.assertIn("119.62", self.page.locator("#complement").inner_text())
         self.fold("roles")
+        self.key("residenceA").fill("190.126")
+        self.assertEqual(self.key("residenceA").input_value(), "190.13")
         self.action("per-child").check()
+        self.key("perChild.0").fill("244.123")
+        self.assertEqual(self.key("perChild.0").input_value(), "244.12")
         self.key("perChild.1").fill("80")
         self.assertIn("separate worksheets", self.page.locator("#result").inner_text())
 

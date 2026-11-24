@@ -11,6 +11,7 @@ import {
   esc,
   cash,
   num,
+  remainingDaysText,
   direction,
   signCash,
   icon,
@@ -708,7 +709,7 @@ export function report(s, r, name) {
         ". Parent A has " +
         num(r.days.A) +
         " days and Parent B has " +
-        num(r.days.B) +
+        remainingDaysText(r.days.A) +
         ". Schedule C " +
         (s.ordered
           ? "uses modeled court-ordered time."

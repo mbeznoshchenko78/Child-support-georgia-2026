@@ -4,11 +4,13 @@ import {
   esc,
   cash,
   num,
+  salarySliderMax,
   clean,
   direction,
   signCash,
   btn,
   field,
+  dayField,
   select,
   check,
   table,
@@ -80,7 +82,7 @@ const title = (axis) =>
   axis === "days"
     ? "Parent A parenting days"
     : "Parent " + axis + " monthly base pay";
-const axisValue = (axis, v) => (axis === "days" ? num(v, 1) : cash(v, 0));
+const axisValue = (axis, v) => (axis === "days" ? num(v) : cash(v, 0));
 function line(s, axis) {
   const points = sensitivity(s, axis),
     valid = points.filter((p) => p.y !== null);
@@ -348,18 +350,18 @@ export function lab(s, axis, k, records, chosen) {
     path +
     '" aria-label="' +
     label +
-    '" type="range" min="0" step="any" max="' +
+    '" type="range" min="0" step="' + (income ? "any" : "0.01") + '" max="' +
     max +
     '" value="' +
-    value +
+    (income ? value : num(value)) +
     '" data-range="' +
     path +
     '"' +
-    (income ? ' data-income="1"' : "") +
+    (income ? ' data-income="1"' : ' data-day-input="1"') +
     ' class="range">';
   const rec =
     '<div class="two">' +
-    field(s, "daysA", "Parent A annual days", { max: 365 }) +
+    dayField(s, "daysA", "Parent A annual days") +
     slider("daysA", s.daysA, 365, "Parent A day slider") +
     select(s, "tie", "Equal-time, equal-income NCP", [
       ["", "Select if needed"],
@@ -390,8 +392,8 @@ export function lab(s, axis, k, records, chosen) {
           slider(
             "parents." + p + ".income.salary",
             s.parents[p].income.salary / (s.period === "annual" ? 1 : 12),
-            Math.max(
-              s.period === "annual" ? 240000 : 20000,
+            salarySliderMax(
+              s.period,
               s.parents[p].income.salary / (s.period === "annual" ? 1 : 12),
             ),
             "Parent " + p + " base pay slider",

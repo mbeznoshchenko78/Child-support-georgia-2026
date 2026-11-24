@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-misX2PFvkxxglQGWcG9QOl/qGN/S1EXRi+HtJsMN0uc='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><title>Georgia Support Studio | Child Support Calculator 2.0</title><style>:root {
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-I5Zv2TYjBeQZESLFe3LNfzsXNGUz3l8kYkXXBz/nN+o='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><title>Georgia Support Studio | Child Support Calculator 2.0</title><style>:root {
   color-scheme: light;
   --bg: #f5f6f2;
   --card: #fff;
@@ -3462,8 +3462,11 @@ const cash = (value, digits = 2) =>
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
-const num = (value, digits = 3) =>
+const num = (value, digits = 2) =>
   Number(value).toLocaleString("en-US", { maximumFractionDigits: digits });
+const remainingDaysText = (daysA) => num(365 - Number(num(daysA)));
+const salarySliderMax = (period, pay) =>
+  Math.max(30000 * (period === "annual" ? 12 : 1), Math.ceil(pay));
 const clean = (v) => (Number.isFinite(v) ? Number(v.toFixed(8)) : "");
 const signCash = (v) => (v > 0 ? "+" : "") + cash(v);
 const direction = (v) =>
@@ -3545,6 +3548,7 @@ function field(s, path, label, opts = {}) {
     path +
     '"' +
     (opts.income ? ' data-income="1"' : "") +
+    (opts.days ? ' data-day-input="1"' : "") +
     ' value="' +
     esc(val) +
     '"' +
@@ -3552,6 +3556,14 @@ function field(s, path, label, opts = {}) {
     (type === "text" ? ' maxlength="4000"' : "") +
     "></span></label>"
   );
+}
+function dayField(s, path, label) {
+  return field(s, path, label, {
+    value: num(get(s, path)),
+    days: true,
+    max: 365,
+    step: "0.01",
+  });
 }
 function select(s, path, label, options) {
   return (
@@ -3647,7 +3659,7 @@ function table(head, rows, caption = "") {
   );
 }
 
-return {esc,cash,num,clean,signCash,direction,icon,get,set,field,select,check,area,btn,panelHead,fold,note,table};
+return {esc,cash,num,remainingDaysText,salarySliderMax,clean,signCash,direction,icon,get,set,field,dayField,select,check,area,btn,panelHead,fold,note,table};
 })();
 modules["src/worksheet-view.mjs"]=(()=>{
 const { INCOME, DIRECT, SOURCES, other }=modules["src/model.mjs"];
@@ -3655,11 +3667,14 @@ const {
   esc,
   cash,
   num,
+  remainingDaysText,
+  salarySliderMax,
   clean,
   signCash,
   direction,
   icon,
   field,
+  dayField,
   select,
   check,
   area,
@@ -3882,12 +3897,12 @@ function timeControls(s) {
   return (
     '<div class="timevalues"><span><i class="dot A"></i>Parent A</span><span><i class="dot B"></i>Parent B</span></div>' +
     '<div class="timeinputs">' +
-    field(s, "daysA", "Parent A days", { max: 365, step: "any" }) +
+    dayField(s, "daysA", "Parent A days") +
     '<span id="complement">' +
-    num(365 - s.daysA) +
+    remainingDaysText(s.daysA) +
     " <small>days</small></span></div>" +
-    '<label class="sr" for="days-slider">Parent A annual parenting days</label><input id="days-slider" class="range time" type="range" min="0" max="365" step="any" value="' +
-    s.daysA +
+    '<label class="sr" for="days-slider">Parent A annual parenting days</label><input id="days-slider" class="range time" type="range" min="0" max="365" step="0.01" data-day-input="1" value="' +
+    num(s.daysA) +
     '" data-range="daysA"><div class="rangefoot"><span>0 days</span><span>Equal time · 182.5</span><span>365 days</span></div>' +
     check(s, "ordered", "Parenting time is court-ordered") +
     note(
@@ -3906,9 +3921,7 @@ function timeControls(s) {
           "separateResidence",
           "Use a distinct residence count to determine custodial status",
         ) +
-        field(s, "residenceA", "Residence days for Parent A · if distinct", {
-          max: 365,
-        }) +
+        dayField(s, "residenceA", "Residence days for Parent A · if distinct") +
         select(
           s,
           "tie",
@@ -3928,11 +3941,10 @@ function timeControls(s) {
           ? '<div class="two">' +
             s.perChild
               .map((v, i) =>
-                field(
+                dayField(
                   s,
                   "perChild." + i,
                   "Child " + (i + 1) + " · Parent A days",
-                  { max: 365 },
                 ),
               )
               .join("") +
@@ -3951,10 +3963,7 @@ function quick(s) {
     .map((k) => {
       const path = "parents." + k + ".income.salary",
         amount = s.parents[k].income.salary / divisor;
-      const max = Math.max(
-        s.period === "annual" ? 240000 : 20000,
-        Math.ceil(amount),
-      );
+      const max = salarySliderMax(s.period, amount);
       return (
         '<div class="paybox ' +
         k +
@@ -4266,11 +4275,13 @@ const {
   esc,
   cash,
   num,
+  salarySliderMax,
   clean,
   direction,
   signCash,
   btn,
   field,
+  dayField,
   select,
   check,
   table,
@@ -4341,7 +4352,7 @@ const title = (axis) =>
   axis === "days"
     ? "Parent A parenting days"
     : "Parent " + axis + " monthly base pay";
-const axisValue = (axis, v) => (axis === "days" ? num(v, 1) : cash(v, 0));
+const axisValue = (axis, v) => (axis === "days" ? num(v) : cash(v, 0));
 function line(s, axis) {
   const points = sensitivity(s, axis),
     valid = points.filter((p) => p.y !== null);
@@ -4609,18 +4620,18 @@ function lab(s, axis, k, records, chosen) {
     path +
     '" aria-label="' +
     label +
-    '" type="range" min="0" step="any" max="' +
+    '" type="range" min="0" step="' + (income ? "any" : "0.01") + '" max="' +
     max +
     '" value="' +
-    value +
+    (income ? value : num(value)) +
     '" data-range="' +
     path +
     '"' +
-    (income ? ' data-income="1"' : "") +
+    (income ? ' data-income="1"' : ' data-day-input="1"') +
     ' class="range">';
   const rec =
     '<div class="two">' +
-    field(s, "daysA", "Parent A annual days", { max: 365 }) +
+    dayField(s, "daysA", "Parent A annual days") +
     slider("daysA", s.daysA, 365, "Parent A day slider") +
     select(s, "tie", "Equal-time, equal-income NCP", [
       ["", "Select if needed"],
@@ -4651,8 +4662,8 @@ function lab(s, axis, k, records, chosen) {
           slider(
             "parents." + p + ".income.salary",
             s.parents[p].income.salary / (s.period === "annual" ? 1 : 12),
-            Math.max(
-              s.period === "annual" ? 240000 : 20000,
+            salarySliderMax(
+              s.period,
               s.parents[p].income.salary / (s.period === "annual" ? 1 : 12),
             ),
             "Parent " + p + " base pay slider",
@@ -4800,6 +4811,7 @@ const {
   esc,
   cash,
   num,
+  remainingDaysText,
   direction,
   signCash,
   icon,
@@ -5497,7 +5509,7 @@ function report(s, r, name) {
         ". Parent A has " +
         num(r.days.A) +
         " days and Parent B has " +
-        num(r.days.B) +
+        remainingDaysText(r.days.A) +
         ". Schedule C " +
         (s.ordered
           ? "uses modeled court-ordered time."
@@ -5713,6 +5725,8 @@ const {
   esc,
   cash,
   num,
+  remainingDaysText,
+  salarySliderMax,
   clean,
   icon,
   get,
@@ -5877,7 +5891,7 @@ function renderResults() {
       : note(esc(error));
   if (el("retro-output")) el("retro-output").innerHTML = retroOutput(s);
   if (el("complement"))
-    el("complement").innerHTML = num(365 - s.daysA) + " <small>days</small>";
+    el("complement").innerHTML = remainingDaysText(s.daysA) + " <small>days</small>";
   el("print-btn").disabled = !current;
   updateLabel();
 }
@@ -5972,9 +5986,16 @@ function dataInput(target, onChange) {
       chartUpdate();
       return;
     }
-    value = target.dataset.income
-      ? cents(val * (s.period === "annual" ? 1 : 12))
-      : val;
+    if (target.dataset.dayInput) {
+      const displayed = num(val);
+      value = Number(displayed);
+      if (val !== value || /\.\d{3,}|e/i.test(target.value))
+        target.value = displayed;
+    } else {
+      value = target.dataset.income
+        ? cents(val * (s.period === "annual" ? 1 : 12))
+        : val;
+    }
   }
   if (
     target.type === "date" &&
@@ -5997,10 +6018,14 @@ function dataInput(target, onChange) {
     const display = target.dataset.income
       ? clean(value / (s.period === "annual" ? 1 : 12))
       : value;
-    if (peer.type === "range" && display > Number(peer.max)) {
-      peer.max = String(display);
-      const foot = peer.nextElementSibling?.lastElementChild;
-      if (foot) foot.textContent = cash(display, 0);
+    if (peer.type === "range" && target.dataset.income) {
+      const max = salarySliderMax(s.period, display);
+      if (max !== Number(peer.max)) {
+        peer.max = String(max);
+        const foot = peer.nextElementSibling;
+        if (foot?.classList.contains("rangefoot"))
+          foot.lastElementChild.textContent = cash(max, 0);
+      }
     }
     peer.value = display;
   }

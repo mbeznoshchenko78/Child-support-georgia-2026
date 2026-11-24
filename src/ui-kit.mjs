@@ -13,8 +13,11 @@ export const cash = (value, digits = 2) =>
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
-export const num = (value, digits = 3) =>
+export const num = (value, digits = 2) =>
   Number(value).toLocaleString("en-US", { maximumFractionDigits: digits });
+export const remainingDaysText = (daysA) => num(365 - Number(num(daysA)));
+export const salarySliderMax = (period, pay) =>
+  Math.max(30000 * (period === "annual" ? 12 : 1), Math.ceil(pay));
 export const clean = (v) => (Number.isFinite(v) ? Number(v.toFixed(8)) : "");
 export const signCash = (v) => (v > 0 ? "+" : "") + cash(v);
 export const direction = (v) =>
@@ -96,6 +99,7 @@ export function field(s, path, label, opts = {}) {
     path +
     '"' +
     (opts.income ? ' data-income="1"' : "") +
+    (opts.days ? ' data-day-input="1"' : "") +
     ' value="' +
     esc(val) +
     '"' +
@@ -103,6 +107,14 @@ export function field(s, path, label, opts = {}) {
     (type === "text" ? ' maxlength="4000"' : "") +
     "></span></label>"
   );
+}
+export function dayField(s, path, label) {
+  return field(s, path, label, {
+    value: num(get(s, path)),
+    days: true,
+    max: 365,
+    step: "0.01",
+  });
 }
 export function select(s, path, label, options) {
   return (
